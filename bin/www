@@ -23,6 +23,11 @@ app.set('port', port);
 const server = http.createServer(app);
 
 /**
+ * Attach socket.io to the same server
+ */
+socket.attach(server);
+
+/**
  * Listen on provided port, on all network interfaces.
  */
 
