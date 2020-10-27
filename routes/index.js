@@ -8,7 +8,7 @@ const util = require('../lib/utilities.js');
 router.get('/', function(req, res, next) {
    res.redirect(`/${util.randomRoom(3,4,3)}`)
  });
- 
+
  /* GET specific room */
  // Pattern: https://example.com/aaa-bbbb-ccc
  router.get('/:room([a-z]{3}-[a-z]{4}-[a-z]{3}$)', function(req, res, next) {
@@ -16,7 +16,8 @@ router.get('/', function(req, res, next) {
    // - Handle user authentication
    // - Persist each room (e.g., write the room ID to a database)
    // - Confirm uniqueness/newness of each room
-   res.render('index', { title: `Room ${req.params['room']}` });
- });
+   const namespace = req.params['room'];
+   res.render('index', { title: `Room ${namespace}`, namespace: namespace  });
+});
 
  module.exports = router;
