@@ -8,8 +8,8 @@
     "url": "git+https://github.com/ITMD545-WebRTC/project-two"
   },
   "scripts": {
-    "dstart": "cross-env DEBUG=project-two:* ./bin/www",
-    "start": "node ./bin/www"
+     "dstart": "DEBUG=socket-express:* npm start",
+     "start": "node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
