@@ -42,3 +42,19 @@ var peerStream = new MediaStream();
 // setting peer video source object to empty peer stream
 peerVideo.srcObject = peerStream;
 
+async function startStream() {
+  try {
+    var stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+    for (var track of stream.getTracks()) {
+      pc.addTrack(track);
+    };
+    selfVideo.srcObject = stream;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// listening to attach peer tracks
+pc.ontrack = function(track) {
+  peerStream.addTrack(track.track);
+}
