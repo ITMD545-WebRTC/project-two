@@ -23,11 +23,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 
-// send a message on successful socket connection
-//socket.on('connection', function(){
-// socket.emit('message', 'Successfully connected.');
-//});
-
 const namespaces = io.of(/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}$/);
 
 namespaces.on('connection', function(socket) {
@@ -35,6 +30,17 @@ namespaces.on('connection', function(socket) {
   // 'socket' object used only for listening and emitting
   const namespace = socket.nsp;
   socket.emit('message', `Successfully connected on namespace: ${namespace.name}`);
+  // listen for call and broadcast to receiving client
+  socket.on('calling', function(){
+    socket.broadcast.emit('calling');
+  });
+  // handle signaling events and their 'destructured' object data
+  socket.on('signal', function({ description, candidate }) {
+    console.log(`Signal received from ${socket.id}`);
+    console.log({ description, candidate });
+    // broadcast received signal so sender does not get its' own description/candidate
+    socket.broadtcast.emit('signal', { description, candidate });
+  });
 });
 
 // catch 404 and forward to error handler
