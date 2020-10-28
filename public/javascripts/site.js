@@ -16,7 +16,7 @@ var clientIs = {
   // only one side of connection needs to be polite
   // polite accepts offer even though it may already have one
   polite: false
-}
+};
 
 // eventual setup of STUN servers
 var rtcConfig = null;
@@ -42,6 +42,7 @@ var peerStream = new MediaStream();
 // setting peer video source object to empty peer stream
 peerVideo.srcObject = peerStream;
 
+// function to start stream when allowed
 async function startStream() {
   try {
     var stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
@@ -52,9 +53,34 @@ async function startStream() {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 // listening to attach peer tracks
 pc.ontrack = function(track) {
   peerStream.addTrack(track.track);
-}
+};
+
+// select call button and create click event on button
+var callButton = document.querySelector("#call-button");
+callButton.addEventListener('click', startCall);
+
+// function to start call when button is clicked
+function startCall() {
+  console.log("Connection: Caller");
+  callButton.hidden = true;
+  clientIs.polite = true;
+  sc.emit("calling");
+  startStream();
+};
+
+// handling receiving connection
+sc.on('calling', function() {
+  console.log("Connection: Receiver");
+  callButton.innerText = "Answer Call";
+  callButton.id = "answer-button";
+  callButton.removeEventListener('click', startCall);
+  callButton.addEventListener('click', function() {
+    callButton.hidden = true;
+    startStream();
+  });
+});
