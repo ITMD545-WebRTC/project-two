@@ -5,7 +5,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const socket = require('socket.io')();
+const io = require('socket.io')();
 
 const indexRouter = require('./routes/index');
 
@@ -28,10 +28,10 @@ app.use('/', indexRouter);
 // socket.emit('message', 'Successfully connected.');
 //});
 
-const namespaces = socket.of(/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}$/);
+const namespaces = io.of(/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}$/);
 
-namespaces.on('connection', function(io) {
-  const namespace = io.nsp;
+namespaces.on('connection', function(socket) {
+  const namespace = socket.nsp;
   namespace.emit('message', `Successfully connected on namespace: ${namespace.name}`);
 });
 
@@ -51,4 +51,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = {app, socket};
+module.exports = {app, io};
