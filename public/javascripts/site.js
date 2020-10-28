@@ -1,12 +1,8 @@
 'use strict'
 
-const socket = io.connect('/');
-var namespace = io.connect('/' + NAMESPACE);
+// namespace --> signaling channel (sc)
+var sc = io.connect('/' + NAMESPACE);
 
-// socket.on('message', function(data) {
-//  console.log('Message received: ' + data);
-// });
-
-namespace.on('message', function(data) {
+sc.on('message', function(data) {
   console.log('Message received: ' + data);
 });
