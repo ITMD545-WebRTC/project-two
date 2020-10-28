@@ -1,5 +1,51 @@
 'use strict'
 
+// location of where the socket will be hosted
+const socket = io('http://localhost:3000');
+// grabbing HTML element IDs
+const messageContainer = document.querySelector(".message-container")
+const messageForm = document.querySelector(".message-form");
+const messageInput = document.querySelector(".message-input");
+// immediately prompts user for a user name to enter chat
+const userName = prompt("Please enter user name");
+// appends message 'You joined' to container
+appendMessage("You joined");
+// sends this message to server indicating user has joined
+socket.emit('new-user', userName);
+
+// formatting message sent from user - 'User: Message'
+socket.on('chat-message', function(data) {
+  appendMessage(`${data.name}: ${data.message}`);
+});
+
+// append message to container if user connected
+socket.on('user-connected', function(userName) {
+  appendMessage(`${userName} connected`);
+});
+
+// append message to container if user disconnected
+socket.on('user-disconnected', function(userName) {
+  appendMessage(`${userName} disconnected`);
+});
+
+// appends messageinput value to message and emits to server as 'You'
+messageForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const message = messageInput.value;
+  appendMessage(`You: ${message}`);
+  socket.emit('send-chat-message', message);
+  messageInput.value = "";
+});
+
+// append message function 
+// appends message to new div message element 
+// new div message element is then appended to the message container
+function appendMessage(message) {
+  const messageElement = document.createElement("div");
+  messageElement.innerText = message;
+  messageContainer.append(messageElement);
+};
+
 // namespace --> signaling channel (sc)
 var sc = io.connect('/' + NAMESPACE);
 
