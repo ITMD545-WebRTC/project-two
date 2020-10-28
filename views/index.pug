@@ -1,8 +1,24 @@
 extends layout
 
 block content
+  header#header
   h1= title
   p Welcome to #{title}
+
+  main#app
+    figure.videos
+      video(
+        id="self-video"
+        autoplay
+        muted
+        playsinline
+      )
+      video(
+        id="peer-video"
+        autoplay
+      )
+      figcaption
+        button#call-button Start Call
 
   script.
      window.NAMESPACE = "#{namespace}";

@@ -6,3 +6,26 @@ body {
 a {
   color: #00B7FF;
 }
+
+video {
+  display: block;
+  max-width: 100%;
+  border: 1px solid black;
+}
+
+#app {
+  margin: 25px auto;
+  width: 90%;
+  background: white;
+}
+
+.videos {
+  position: relative;
+}
+
+#self-video {
+  position: absolute;
+  width: 30%;
+  top: 30px;
+  right: 30px;
+}
