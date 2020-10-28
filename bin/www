@@ -5,7 +5,7 @@
  * Module dependencies.
  */
 
-const {app, socket} = require('../app');
+const {app, io} = require('../app');
 const debug = require('debug')('project-two:server');
 const http = require('http');
 
@@ -25,7 +25,7 @@ const server = http.createServer(app);
 /**
  * Attach socket.io to the same server
  */
-socket.attach(server);
+io.attach(server);
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -4,5 +4,24 @@ block content
   h1= title
   p Welcome to #{title}
 
+  main#app
+    figure.videos
+      video(
+        id="self-video"
+        autoplay
+        muted
+        playsinline
+      )
+      video(
+        id="peer-video"
+        autoplay
+      )
+      figcaption
+        button#call-button Start Call
+    div.message-container
+    form.message-form(action="")
+      input.message-input(type="text")
+      button.send-button(type="submit") Send
+
   script.
      window.NAMESPACE = "#{namespace}";

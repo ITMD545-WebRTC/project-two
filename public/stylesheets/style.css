@@ -6,3 +6,52 @@ body {
 a {
   color: #00B7FF;
 }
+
+h1, p {
+  text-align: center;
+}
+
+button {
+  font-size: inherit;
+  line-height: inherit;
+  padding: 6px;
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+#answer-button {
+  background-color: green;
+  color: white;
+}
+
+video {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: gray;
+  border: 1px solid black;
+}
+
+#app {
+  box-sizing: border-box;
+  padding-top: 12px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.videos {
+  position: relative;
+}
+
+.videos figcaption {
+  padding: 12px;
+}
+
+#self-video {
+  position: absolute;
+  width: 20%;
+  top: 12px;
+  right: 12px;
+}
