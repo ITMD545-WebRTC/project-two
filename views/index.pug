@@ -18,6 +18,10 @@ block content
       )
       figcaption
         button#call-button Start Call
+    div.message-container
+    form.message-form(action="")
+      input.message-input(type="text")
+      button.send-button(type="submit") Send
 
   script.
      window.NAMESPACE = "#{namespace}";
