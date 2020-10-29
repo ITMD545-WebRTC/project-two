@@ -3,9 +3,9 @@
 // location of where the socket will be hosted
 const socket = io('http://localhost:3000');
 // grabbing HTML element IDs
-const messageContainer = document.querySelector(".message-container")
-const messageForm = document.querySelector(".message-form");
-const messageInput = document.querySelector(".message-input");
+const messageContainer = document.querySelector("#message-container")
+const messageForm = document.querySelector("#message-form");
+const messageInput = document.querySelector("#message-input");
 // immediately prompts user for a user name to enter chat
 const userName = prompt("Please enter user name");
 // appends message 'You joined' to container
