@@ -111,16 +111,6 @@ video {
 }
 
 /* board columns */
-#col_0:hover,
-#col_1:hover,
-#col_2:hover,
-#col_3:hover,
-#col_4:hover,
-#col_5:hover,
-#col_6:hover {
-  background-color: pink;
-}
-
 .tile {
   /* make ratio 1:1 */
   height: 0;
