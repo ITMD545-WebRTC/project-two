@@ -35,3 +35,132 @@ main {
   margin: auto;
   width: 80%;
 }
+
+/* video screens */
+.videos-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 3vh;
+  margin: 1em 0;
+}
+
+video {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: gray;
+  border: 1px solid black;
+}
+
+button {
+  font-size: inherit;
+  line-height: inherit;
+  padding: 6px;
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+#answer-button {
+  background-color: green;
+  color: white;
+}
+
+/* gameboard */
+#gameboard {
+  background-color: lightblue;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+#gameboard ul {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+/* board columns */
+#col_0:hover,
+#col_1:hover,
+#col_2:hover,
+#col_3:hover,
+#col_4:hover,
+#col_5:hover,
+#col_6:hover {
+  background-color: pink;
+}
+
+.tile {
+  /* make ratio 1:1 */
+  position: relative;
+  height: 0;
+  padding-bottom: 100%;
+}
+
+/* WIDE SCREEN STYLINGS  */
+@media (min-width: 800px) {
+  main {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    grid-gap: 2em;
+    width: 95%;
+    height: 80vh;
+  }
+
+  .videos-container {
+    display: block;
+    margin: 0;
+  }
+
+  #call {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+  }
+
+  /* video screens*/
+  video {
+    margin-bottom: 1em;
+  }
+
+  #peer-video {
+    width: 100%;
+  }
+
+  #self-video {
+    width: 40%;
+  }
+
+  /* chat history and text box */
+  #chat-panel {
+    background-color: grey;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 40%;
+    margin-top: 5vh;
+    max-height: 40%;
+    overflow: hidden;
+  }
+
+  #message-container {
+    height: 100%;
+    max-height: 100%;
+    overflow-y: scroll;
+  }
+
+  #message-form {
+    display: block;
+  }
+}
+
+@media (min-width: 1500px) {
+  body {
+    padding: 5vh 12vw;
+  }
+
+  main {
+    grid-gap: 3em;
+  }
+}
