@@ -43,7 +43,7 @@ messageForm.addEventListener('submit', function(event) {
 function appendMessage(message) {
   const messageElement = document.createElement("li");
   messageElement.innerText = message;
-  messageContainer.append(messageElement);
+  messageContainer.prepend(messageElement);
 };
 
 // namespace --> signaling channel (sc)
