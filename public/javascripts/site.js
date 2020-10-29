@@ -130,3 +130,21 @@ sc.on('calling', function() {
     startStream();
   });
 });
+
+(function () {
+
+  // automates gameboard creation
+  const gameboard = document.querySelector('#gameboard');
+  for (var i = 0; i <=6; i++) {
+    let newRow = document.createElement('ul');
+    newRow.id = 'col_' + i;
+    for (var j = 0; j <=5; j++) {
+        let newCell = document.createElement('li');
+        newCell.classList.add('tile');
+        newCell.innerText = 'hi';
+        newRow.append(newCell);
+    }
+    gameboard.append(newRow);
+  }
+
+})(); // end of IIFE
