@@ -185,4 +185,13 @@ sc.on('calling', function() {
     });
   }) // end of forEach (A-G)
 
+  // these happen when someone selects a column
+  function selectColumn(col) {
+    var selectedTile = landingTiles.get(col);
+    selectedTile.firstChild.classList.add('tiled');
+    // remove last tile on the vacantTiles
+    // assign last tile as the landingTile
+    landingTiles.set(col, vacantTiles.get(col).pop());
+  }
+
 })(); // end of IIFE
