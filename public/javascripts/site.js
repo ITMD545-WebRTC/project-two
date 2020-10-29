@@ -3,9 +3,9 @@
 // location of where the socket will be hosted
 const socket = io('http://localhost:3000');
 // grabbing HTML element IDs
-const messageContainer = document.querySelector(".message-container")
-const messageForm = document.querySelector(".message-form");
-const messageInput = document.querySelector(".message-input");
+const messageContainer = document.querySelector("#message-container")
+const messageForm = document.querySelector("#message-form");
+const messageInput = document.querySelector("#message-input");
 // immediately prompts user for a user name to enter chat
 const userName = prompt("Please enter user name");
 // appends message 'You joined' to container
@@ -37,13 +37,13 @@ messageForm.addEventListener('submit', function(event) {
   messageInput.value = "";
 });
 
-// append message function 
-// appends message to new div message element 
+// append message function
+// appends message to new div message element
 // new div message element is then appended to the message container
 function appendMessage(message) {
-  const messageElement = document.createElement("div");
+  const messageElement = document.createElement("li");
   messageElement.innerText = message;
-  messageContainer.append(messageElement);
+  messageContainer.prepend(messageElement);
 };
 
 // namespace --> signaling channel (sc)
@@ -57,7 +57,7 @@ sc.on('message', function(data) {
 var clientIs = {
   makingOffer: false,
   ignoringOffer: false,
-  // has opposite 'impolite' 
+  // has opposite 'impolite'
   // impolite makes connection accept offer regardless
   // only one side of connection needs to be polite
   // polite accepts offer even though it may already have one
@@ -130,3 +130,68 @@ sc.on('calling', function() {
     startStream();
   });
 });
+
+(function () {
+  // declare arrays and maps to keep track of gameplay
+  const gameboard = document.querySelector('#gameboard');
+  var landingTiles = new Map();
+  var vacantTiles = new Map();
+  var gameplay = [['-', '-', '-', '-', '-', '-', '-'],
+                  ['-', '-', '-', '-', '-', '-', '-'],
+                  ['-', '-', '-', '-', '-', '-', '-'],
+                  ['-', '-', '-', '-', '-', '-', '-'],
+                  ['-', '-', '-', '-', '-', '-', '-'],
+                  ['-', '-', '-', '-', '-', '-', '-']];
+
+  // automates gameboard creation
+  const columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  // iterates from A - G
+  columns.forEach((col, i) => {
+    // create a column(ul) of tiles(li)
+    let newCol = document.createElement('ul');
+    newCol.id = col;
+
+    // iterates for each row
+    for (var j = 0; j <=5; j++) {
+        let newCell = document.createElement('li');
+        let circle = document.createElement('span');
+        newCell.classList.add('tile');
+        newCell.id = col + j;
+        circle.innerText = ' ';
+        circle.classList.add('circle');
+        newCell.append(circle);
+        newCol.append(newCell);
+    }
+
+    // add elements to gameplay trackers
+    vacantTiles.set(col, [...newCol.children]);
+    landingTiles.set(col, vacantTiles.get(col).pop());
+    // add all tiles and columns on the page
+    gameboard.append(newCol);
+
+    // EVENT LISTENERS for each column
+    newCol.addEventListener('mouseover', function(event){ // hover in
+      let bottomTile = landingTiles.get(event.currentTarget.id);
+      bottomTile.firstChild.classList.add('imaginer');
+    });
+
+    newCol.addEventListener('mouseout', function(event){ // hover out
+      let bottomTile = landingTiles.get(event.currentTarget.id);
+      bottomTile.firstChild.classList.remove('imaginer');
+    });
+
+    newCol.addEventListener('click', function(event){ // clickeroo
+      selectColumn(event.currentTarget.id);
+    });
+  }) // end of forEach (A-G)
+
+  // these happen when someone selects a column
+  function selectColumn(col) {
+    var selectedTile = landingTiles.get(col);
+    selectedTile.firstChild.classList.add('tiled');
+    // remove last tile on the vacantTiles
+    // assign last tile as the landingTile
+    landingTiles.set(col, vacantTiles.get(col).pop());
+  }
+
+})(); // end of IIFE
