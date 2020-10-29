@@ -1,27 +1,31 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  header
+    h1 Connect4
+    p #{title}
 
-  main#app
-    figure.videos
-      video(
-        id="self-video"
-        autoplay
-        muted
-        playsinline
-      )
-      video(
-        id="peer-video"
-        autoplay
-      )
-      figcaption
+  main
+    section#call
+      figure.videos-container
+        video(
+          id="peer-video"
+          autoplay
+        )
+        video(
+          id="self-video"
+          autoplay
+          muted
+          playsinline
+        )
+
         button#call-button Start Call
-    div.message-container
-    form.message-form(action="")
-      input.message-input(type="text")
-      button.send-button(type="submit") Send
+
+      section#chat-panel
+        form#message-form(action="")
+          input#message-input(type="text")
+          button#send-button(type="submit") Send
+        ul#message-container
 
   script.
      window.NAMESPACE = "#{namespace}";
