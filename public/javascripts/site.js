@@ -144,17 +144,30 @@ sc.on('calling', function() {
                   ['-', '-', '-', '-', '-', '-', '-']];
 
   // automates gameboard creation
-  const gameboard = document.querySelector('#gameboard');
-  for (var i = 0; i <=6; i++) {
-    let newRow = document.createElement('ul');
-    newRow.id = 'col_' + i;
+  const columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  // iterates from A - G
+  columns.forEach((col, i) => {
+    // create a column(ul) of tiles(li)
+    let newCol = document.createElement('ul');
+    newCol.id = col;
+
+    // iterates for each row
     for (var j = 0; j <=5; j++) {
         let newCell = document.createElement('li');
+        let circle = document.createElement('span');
         newCell.classList.add('tile');
-        newCell.innerText = 'hi';
-        newRow.append(newCell);
+        newCell.id = col + j;
+        circle.innerText = ' ';
+        circle.classList.add('circle');
+        newCell.append(circle);
+        newCol.append(newCell);
     }
-    gameboard.append(newRow);
+
+    // add elements to gameplay trackers
+    vacantTiles.set(col, [...newCol.children]);
+    landingTiles.set(col, vacantTiles.get(col).pop());
+    // add all tiles and columns on the page
+    gameboard.append(newCol);
   }
 
 })(); // end of IIFE
