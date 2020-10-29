@@ -120,6 +120,24 @@ video {
   position: relative;
   height: 0;
   padding-bottom: 100%;
+  position: relative;
+  margin: auto;
+  width: 100%;
+}
+
+.circle {
+  background-color: white;
+  border-radius: 50%;
+  display: block;
+  height: 80%;
+  margin: 10%;
+  width: 80%;
+  position: absolute;
+}
+
+.imaginer,
+.tiled {
+  background-color: #FF1F2E;
 }
 
 /* WIDE SCREEN STYLINGS  */
