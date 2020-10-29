@@ -37,8 +37,8 @@ messageForm.addEventListener('submit', function(event) {
   messageInput.value = "";
 });
 
-// append message function 
-// appends message to new div message element 
+// append message function
+// appends message to new div message element
 // new div message element is then appended to the message container
 function appendMessage(message) {
   const messageElement = document.createElement("li");
@@ -57,7 +57,7 @@ sc.on('message', function(data) {
 var clientIs = {
   makingOffer: false,
   ignoringOffer: false,
-  // has opposite 'impolite' 
+  // has opposite 'impolite'
   // impolite makes connection accept offer regardless
   // only one side of connection needs to be polite
   // polite accepts offer even though it may already have one
