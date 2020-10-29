@@ -98,12 +98,14 @@ video {
 
 /* gameboard */
 #gameboard {
-  background-color: lightblue;
+  background-color: #35A7FF;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  padding: 0.5em 1.5em;
 }
 
 #gameboard ul {
+  cursor: pointer;
   display: grid;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
 }
@@ -121,7 +123,6 @@ video {
 
 .tile {
   /* make ratio 1:1 */
-  position: relative;
   height: 0;
   padding-bottom: 100%;
   position: relative;
@@ -185,7 +186,7 @@ video {
 
   /* chat history and text box */
   #chat-panel {
-    background-color: #35A7FF;
+    background-color: #FF4754;
     border-radius: 15px;
     display: flex;
     flex-direction: column;
@@ -201,6 +202,11 @@ video {
     height: 100%;
     max-height: 100%;
     overflow-y: scroll;
+  }
+
+  #message-container li {
+    color: white;
+    line-height: 1.3em;
   }
 
   #message-form {
@@ -222,7 +228,7 @@ video {
   #send-button {
     border: none;
     border-radius: 0 15px 15px 0;
-    color: #35A7FF;
+    color: #FF3341;
     height: 125%;
   }
 
