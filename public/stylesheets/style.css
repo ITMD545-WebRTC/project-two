@@ -16,6 +16,14 @@ body {
   padding: 5vh 5vw;
 }
 
+button {
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  font-family: 'Cabin', sans-serif;
+  padding: 0 1em;
+}
+
 h1 {
   font-family: 'Viga', sans-serif;
   font-size: 3.5em;
@@ -23,12 +31,35 @@ h1 {
 }
 
 header {
-  margin-bottom: 1em;
+  margin-bottom: 3em;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header p {
+  background-color: #FFE74C;
+  display: block;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0.5em 0;
+  padding: 0.5em 1em;
+  width: max-content;
+}
+
+.connect {
+  color: #0A95FF;
+}
+
+.four {
+  color: #FF3341;
 }
 
 html {
-    font-size: 1.125em;
+  font-family: 'Cabin', sans-serif;
+  font-size: 1.125em;
+  font-weight: 400;
 }
 
 main {
@@ -45,26 +76,20 @@ main {
 }
 
 video {
-  display: block;
+  background-color: #FFE74C;
+  border: none;
   box-sizing: border-box;
+  display: block;
   width: 100%;
-  background-color: gray;
-  border: 1px solid black;
 }
 
-button {
-  font-size: inherit;
-  line-height: inherit;
-  padding: 6px;
-  background-color: white;
-  color: black;
-  border: 1px solid black;
-  border-radius: 5px;
-}
 
+#call-button,
 #answer-button {
-  background-color: green;
+  background-color: #13CD26;
+  border-radius: 15px;
   color: white;
+  padding: 0.5em 1em;
 }
 
 /* gameboard */
@@ -99,6 +124,10 @@ button {
 
 /* WIDE SCREEN STYLINGS  */
 @media (min-width: 800px) {
+  h1 {
+    font-size: 4em;
+  }
+
   main {
     display: grid;
     grid-template-columns: 2fr 3fr;
@@ -134,7 +163,8 @@ button {
 
   /* chat history and text box */
   #chat-panel {
-    background-color: grey;
+    background-color: #35A7FF;
+    border-radius: 15px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -142,6 +172,7 @@ button {
     margin-top: 5vh;
     max-height: 40%;
     overflow: hidden;
+    padding: 0.5em;
   }
 
   #message-container {
@@ -151,13 +182,37 @@ button {
   }
 
   #message-form {
-    display: block;
+    display: flex;
+    height: 2em;
+    margin-bottom: 1em;
+    width: 100%;
   }
+
+  #message-input {
+    border: none;
+    border-radius: 15px 0 0 15px;
+    display: block;
+    height: 100%;
+    padding: 0.3em 1em;
+    width: 100%;
+  }
+
+  #send-button {
+    border: none;
+    border-radius: 0 15px 15px 0;
+    color: #35A7FF;
+    height: 125%;
+  }
+
 }
 
 @media (min-width: 1500px) {
   body {
     padding: 5vh 12vw;
+  }
+
+  h1 {
+    font-size: 5em;
   }
 
   main {
