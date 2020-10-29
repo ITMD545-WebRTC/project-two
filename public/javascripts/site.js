@@ -168,6 +168,21 @@ sc.on('calling', function() {
     landingTiles.set(col, vacantTiles.get(col).pop());
     // add all tiles and columns on the page
     gameboard.append(newCol);
-  }
+
+    // EVENT LISTENERS for each column
+    newCol.addEventListener('mouseover', function(event){ // hover in
+      let bottomTile = landingTiles.get(event.currentTarget.id);
+      bottomTile.firstChild.classList.add('imaginer');
+    });
+
+    newCol.addEventListener('mouseout', function(event){ // hover out
+      let bottomTile = landingTiles.get(event.currentTarget.id);
+      bottomTile.firstChild.classList.remove('imaginer');
+    });
+
+    newCol.addEventListener('click', function(event){ // clickeroo
+      selectColumn(event.currentTarget.id);
+    });
+  }) // end of forEach (A-G)
 
 })(); // end of IIFE
