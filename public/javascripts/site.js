@@ -132,6 +132,16 @@ sc.on('calling', function() {
 });
 
 (function () {
+  // declare arrays and maps to keep track of gameplay
+  const gameboard = document.querySelector('#gameboard');
+  var landingTiles = new Map();
+  var vacantTiles = new Map();
+  var gameplay = [['-', '-', '-', '-', '-', '-', '-'],
+                  ['-', '-', '-', '-', '-', '-', '-'],
+                  ['-', '-', '-', '-', '-', '-', '-'],
+                  ['-', '-', '-', '-', '-', '-', '-'],
+                  ['-', '-', '-', '-', '-', '-', '-'],
+                  ['-', '-', '-', '-', '-', '-', '-']];
 
   // automates gameboard creation
   const gameboard = document.querySelector('#gameboard');
