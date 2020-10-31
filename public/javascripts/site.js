@@ -140,8 +140,18 @@ async function negotiateConnection() {
     try {
       console.log('Making an offer');
       clientIs.makingOffer = true;
-      await pc.setLocalDescription();
-      sc.emit('signal', { description: pc.localDescription });
+      try {
+        // Very latest browsers are ok with an
+        // argument-less call to setLocalDescription:
+        await pc.setLocalDescription();
+      } catch (error) {
+        // Older browsers are NOT ok. So because we're making an
+        // offer, we need to prepare an offer:
+        var offer = await pc.createOffer();
+        await pc.setLocalDescription(new RTCSessionDescription(offer));
+      } finally {
+        sc.emit('signal', { description: pc.localDescription });
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -169,8 +179,18 @@ sc.on('signal', async function({ candidate, description }) {
       // if its an offer, we need to answer it
       if (description.type == 'offer') {
         console.log('Specifically, an offer description');
-        await pc.setLocalDescription();
-        sc.emit('signal', { description: pc.localDescription});
+          try {
+            // Very latest browsers are ok with an
+            // argument-less call to setLocalDescription:
+            await pc.setLocalDescription();
+          } catch (error) {
+            // Older browsers are NOT ok. So because we're handling an
+            // offer, we need to prepare ans answer:
+            var answer = await pc.createAnswer();
+            await pc.setLocalDescription(new RTCSessionDescription(answer));
+          } finally {
+              sc.emit('signal', { description: pc.localDescription});
+          }
       }
 
     } else if (candidate) {
