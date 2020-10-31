@@ -188,7 +188,7 @@ pc.onicecandidate = function({candidate}) {
   sc.emit('signal', { candidate: candidate});
 }
 
-(function () {
+function videoGame() {
   // declare arrays and maps to keep track of gameplay
   const gameboard = document.querySelector('#gameboard');
   var landingTiles = new Map();
@@ -251,4 +251,6 @@ pc.onicecandidate = function({candidate}) {
     landingTiles.set(col, vacantTiles.get(col).pop());
   }
 
-}); // end of IIFE
+}; // end of IIFE
+
+videoGame();
