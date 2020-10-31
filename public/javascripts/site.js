@@ -176,7 +176,11 @@ sc.on('signal', async function({ candidate, description }) {
     } else if (candidate) {
       console.log('Recieved a candidate');
       console.log(candidate);
-      await pc.addIceCandidate(candidate);
+      // Save Safari and other browsers that can't handle an
+      // empty string for the `candidate.candidate` value:
+      if (candidate.candidate.length > 1) {
+        await pc.addIceCandidate(candidate);
+      }
     }
   } catch (error) {
     console.error(error);
