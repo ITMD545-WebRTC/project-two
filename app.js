@@ -41,7 +41,7 @@ namespaces.on('connection', function(socket) {
     console.log(`Signal received from ${socket.id}`);
     console.log({ description, candidate });
     // broadcast received signal so sender does not get its' own description/candidate
-    socket.broadtcast.emit('signal', { description, candidate });
+    socket.broadcast.emit('signal', { description, candidate });
   });
 });
 
