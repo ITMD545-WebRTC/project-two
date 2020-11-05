@@ -1,8 +1,37 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  header
+    h1
+      span.connect Connect
+      span.four 4
+
+    p #{title}
+
+  main
+    section#call
+      figure.videos-container
+        video(
+          id="peer-video"
+          autoplay
+        )
+        video(
+          id="self-video"
+          autoplay
+          muted
+          playsinline
+        )
+
+      button#call-button Start Call
+
+      section#chat-panel
+        form#message-form(action="")
+          input#message-input(type="text")
+          button#send-button(type="submit") Send
+        ul#message-container
+
+    section#board
+      article#gameboard
 
   script.
      window.NAMESPACE = "#{namespace}";

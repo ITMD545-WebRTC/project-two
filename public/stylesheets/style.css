@@ -1,8 +1,239 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+/* stylelint-disable */
+/* Keep reset CSS to one minified line */
+a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{margin:0;padding:0;border:0;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}html,.reset{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}table{border-collapse:collapse;border-spacing:0}
+/* stylelint-enable */
 
 a {
-  color: #00B7FF;
+  text-decoration: none;
+}
+
+body {
+  height:100%;
+  padding: 5vh 5vw;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  font-family: 'Cabin', sans-serif;
+  padding: 0 1em;
+}
+
+h1 {
+  font-family: 'Viga', sans-serif;
+  font-size: 3.5em;
+  text-align: center;
+}
+
+header {
+  margin-bottom: 3em;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header p {
+  background-color: #FFE74C;
+  display: block;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0.5em 0;
+  padding: 0.5em 1em;
+  width: max-content;
+}
+
+.connect {
+  color: #0A95FF;
+}
+
+.four {
+  color: #FF3341;
+}
+
+html {
+  font-family: 'Cabin', sans-serif;
+  font-size: 1.125em;
+  font-weight: 400;
+}
+
+main {
+  margin: auto;
+  width: 80%;
+}
+
+/* video screens */
+.videos-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 3vh;
+  margin: 1em 0;
+}
+
+video {
+  background-color: #FFE74C;
+  border: none;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+}
+
+
+#call-button,
+#answer-button {
+  background-color: #13CD26;
+  border-radius: 15px;
+  color: white;
+  padding: 0.5em 1em;
+}
+
+#chat-panel {
+  display: none;
+}
+
+/* gameboard */
+#gameboard {
+  background-color: #35A7FF;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  padding: 0.5em 1.5em;
+}
+
+#gameboard ul {
+  cursor: pointer;
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+/* board columns */
+.tile {
+  /* make ratio 1:1 */
+  height: 0;
+  padding-bottom: 100%;
+  position: relative;
+  margin: auto;
+  width: 100%;
+}
+
+.circle {
+  background-color: white;
+  border-radius: 50%;
+  display: block;
+  height: 80%;
+  margin: 10%;
+  width: 80%;
+  position: absolute;
+}
+
+.imaginer,
+.tiled {
+  background-color: #FF1F2E;
+}
+
+/* WIDE SCREEN STYLINGS  */
+@media (min-width: 800px) {
+  h1 {
+    font-size: 4em;
+  }
+
+  main {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    grid-gap: 2em;
+    width: 95%;
+    height: 80vh;
+  }
+
+  .videos-container {
+    display: block;
+    margin: 0;
+  }
+
+  #call {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+  }
+
+  /* video screens*/
+  video {
+    margin-bottom: 1em;
+  }
+
+  #peer-video {
+    width: 100%;
+  }
+
+  #self-video {
+    width: 40%;
+  }
+
+  /* chat history and text box */
+  #chat-panel {
+    background-color: #FF4754;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 40%;
+    margin-top: 5vh;
+    max-height: 40%;
+    overflow: hidden;
+    padding: 0.5em;
+  }
+
+  #message-container {
+    height: 100%;
+    max-height: 100%;
+    overflow-y: scroll;
+  }
+
+  #message-container li {
+    color: white;
+    line-height: 1.3em;
+  }
+
+  #message-form {
+    display: flex;
+    height: 2em;
+    margin-bottom: 1em;
+    width: 100%;
+  }
+
+  #message-input {
+    border: none;
+    border-radius: 15px 0 0 15px;
+    display: block;
+    height: 100%;
+    padding: 0.3em 1em;
+    width: 100%;
+  }
+
+  #send-button {
+    border: none;
+    border-radius: 0 15px 15px 0;
+    color: #FF3341;
+    height: 125%;
+  }
+
+}
+
+@media (min-width: 1500px) {
+  body {
+    padding: 5vh 12vw;
+  }
+
+  h1 {
+    font-size: 5em;
+  }
+
+  main {
+    grid-gap: 3em;
+  }
 }

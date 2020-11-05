@@ -5,7 +5,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const socket = require('socket.io')();
+const io = require('socket.io')();
 
 const indexRouter = require('./routes/index');
 
@@ -23,16 +23,45 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 
-// send a message on successful socket connection
-//socket.on('connection', function(){
-// socket.emit('message', 'Successfully connected.');
-//});
+const namespaces = io.of(/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}$/);
+// create array of empty users
+const users = {};
 
-const namespaces = socket.of(/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}$/);
+namespaces.on('connection', function(socket) {
+  // 'namespace' is only for diagnostic purposes
+  // 'socket' object used only for listening and emitting
+  const namespace = socket.nsp;
+  socket.emit('message', `Successfully connected on namespace: ${namespace.name}`);
+  // listen for call and broadcast to receiving client
+  socket.on('calling', function(){
+    socket.broadcast.emit('calling');
+  });
+  // handle signaling events and their 'destructured' object data
+  socket.on('signal', function({ description, candidate }) {
+    console.log(`Signal received from ${socket.id}`);
+    console.log({ description, candidate });
+    // broadcast received signal so sender does not get its' own description/candidate
+    socket.broadcast.emit('signal', { description, candidate });
+  });
+});
 
-namespaces.on('connection', function(io) {
-  const namespace = io.nsp;
-  namespace.emit('message', `Successfully connected on namespace: ${namespace.name}`);
+// create a connection socket for connected user
+io.on('connection', function(socket) {
+  // broadcasting user connection to client
+  socket.on('new-user', function(userName) {
+    users[socket.id] = userName;
+    socket.broadcast.emit('user-connected', userName);
+  })
+  // broadcast message to client
+  socket.on('send-chat-message', function(message) {
+    socket.broadcast.emit('chat-message', {message: message, name: users[socket.id] });
+  });
+  // broadcasting user disconnection from client
+  // deletes specific socket.id from users array
+  socket.on('disconnect', function() {
+    socket.broadcast.emit('user-disconnected', users[socket.id]);
+    delete users[socket.id];
+  })
 });
 
 // catch 404 and forward to error handler
@@ -51,4 +80,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = {app, socket};
+module.exports = {app, io};

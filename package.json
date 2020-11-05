@@ -8,8 +8,8 @@
     "url": "git+https://github.com/ITMD545-WebRTC/project-two"
   },
   "scripts": {
-     "dstart": "DEBUG=socket-express:* npm start",
-     "start": "node ./bin/www"
+    "dstart": "nodemon DEBUG=socket-express:* npm start",
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -20,5 +20,8 @@
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11",
     "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
   }
 }
