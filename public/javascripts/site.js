@@ -1,15 +1,20 @@
 'use strict'
 
-// location of where the socket will be hosted
-const socket = io('http://localhost:3000');
-// grabbing HTML element IDs
-const messageContainer = document.querySelector("#message-container")
+// placeholder for data channel
+var dataChannel = null;
+
+// grabbing HTML DOM elements
+const chatPanel = document.querySelector("#chat-panel");
+const messageContainer = document.querySelector("#message-container");
 const messageForm = document.querySelector("#message-form");
 const messageInput = document.querySelector("#message-input");
+const sendButton = document.querySelector("#send-button");
+
 // immediately prompts user for a user name to enter chat
-const userName = prompt("Please enter user name");
+const userName = prompt("Please enter user name:");
+
 // appends message 'You joined' to container
-appendMessage("You joined");
+appendMessage(messageContainer, "You joined", userName);
 // sends this message to server indicating user has joined
 socket.emit('new-user', userName);
 
@@ -40,10 +45,22 @@ messageForm.addEventListener('submit', function(event) {
 // append message function
 // appends message to new div message element
 // new div message element is then appended to the message container
-function appendMessage(message) {
+function appendMessage(log, message, user) {
   const messageElement = document.createElement("li");
-  messageElement.innerText = message;
-  messageContainer.prepend(messageElement);
+  const messageNode = document.createTextNode(message);
+  messageElement.className = user;
+  messageElement.appendChild(messageNode);
+  log.appendChild(messageElement);
+  if (chatPanel.scrollTo) {
+    chatPanel.scrollTo({
+      top: chatPanel.scrollHeight,
+      behavior: 'smooth'
+    });
+  } else {
+    chatPanel.scrollTop = chatPanel.scrollHeight;
+  }
+  //messageElement.innerText = message;
+  //messageContainer.prepend(messageElement);
 };
 
 // namespace --> signaling channel (sc)
