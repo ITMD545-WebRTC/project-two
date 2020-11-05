@@ -33,18 +33,9 @@ socket.on('user-disconnected', function(userName) {
   appendMessage(`${userName} disconnected`);
 });
 
-// appends messageinput value to message and emits to server as 'You'
-messageForm.addEventListener('submit', function(event) {
-  event.preventDefault();
-  const message = messageInput.value;
-  appendMessage(`You: ${message}`);
-  socket.emit('send-chat-message', message);
-  messageInput.value = "";
-});
-
 // append message function
-// appends message to new div message element
-// new div message element is then appended to the message container
+// appends message to new message element
+// new message element is then appended to the message container
 function appendMessage(log, message, user) {
   const messageElement = document.createElement("li");
   const messageNode = document.createTextNode(message);
@@ -62,6 +53,26 @@ function appendMessage(log, message, user) {
   //messageElement.innerText = message;
   //messageContainer.prepend(messageElement);
 };
+
+function addDataChannelEventListeners(datachannel) {
+  datachannel.onmessage = function() {
+
+  }
+  datachannel.onopen = function() {
+
+  }
+  datachannel.onclose = function() {
+
+  }
+  // appends messageinput value to message
+  messageForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const message = messageInput.value;
+    appendMessage(messageContainer, `You: ${message}`, 'self');
+    datachannel.send(msg);
+    messageInput.value = "";
+  });
+}
 
 // namespace --> signaling channel (sc)
 var sc = io.connect('/' + NAMESPACE);
