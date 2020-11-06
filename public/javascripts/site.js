@@ -1,7 +1,7 @@
 'use strict'
 
-// sends this message to server indicating user has joined
-// socket.emit('new-user', userName);
+// TODO: notify new user has connected/disconnected to already connected users in chat
+// TODO: format user messages to be able to distinguish user messages
 
 // formatting message sent from user - 'User: Message'
 // socket.on('chat-message', function(data) {
@@ -53,8 +53,8 @@ const sendButton = document.querySelector("#send-button");
 // immediately prompts user for a user name to enter chat
 const userName = prompt("Please enter user name:");
 
-// appends message 'You joined' to message container
-appendMessage(messageContainer, "You joined", userName);
+// appends message 'You have joined the room' to message container
+appendMessage(messageContainer, `${userName} has joined the room.`, 'self');
 
 // append message function
 // appends message to new message element
@@ -77,7 +77,7 @@ function appendMessage(container, message, user) {
 
 function addDataChannelEventListeners(datachannel) {
   datachannel.onmessage = function(event) {
-    appendMessage(messageContainer, event.data, 'peer');
+    appendMessage(messageContainer, `${event.userName}: ${event.data}`, 'peer');
   }
   datachannel.onopen = function() {
     // enabling message input and send button
