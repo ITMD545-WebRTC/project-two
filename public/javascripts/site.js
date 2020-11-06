@@ -333,6 +333,17 @@ function videoGame() {
       gameplay[row][col] = 'x';
   }
 
+  function cueWin() {
+    console.log('ya win');
+    var cols = document.querySelectorAll('#gameboard > ul');
+    cols.forEach((col, i) => {
+      col.removeEventListener('click', function(event){ // remove clickeroo
+        selectColumn(event.currentTarget.id);
+      });
+    });
+    winnerLabel.classList.add('visible');
+  }
+
   function checkWin() {
     var didWin = false;
     for (let row = 5; row >= 0; row--) { // loop rows bottom to up
