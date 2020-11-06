@@ -262,6 +262,10 @@ pc.onicecandidate = function({candidate}) {
 function videoGame() {
   // declare arrays and maps to keep track of gameplay
   const gameboard = document.querySelector('#gameboard');
+  const chatPanel = document.querySelector('#chat-panel');
+  const winnerLabel = document.querySelector('#endgame');
+  const replayBtn = document.querySelector('#replay-btn');
+  const chatPopout = document.querySelector('#chat-open');
   var landingTiles = new Map();
   var vacantTiles = new Map();
   var gameplay;
@@ -321,11 +325,20 @@ function videoGame() {
     }) // end of forEach (A-G)
   } // end of setup
 
-    // EVENT LISTENERS for each column
-    newCol.addEventListener('mouseover', function(event){ // hover in
-      let bottomTile = landingTiles.get(event.currentTarget.id);
-      bottomTile.firstChild.classList.add('imaginer');
-    });
+  // REPLAY button is clicked, reset everything
+  replayBtn.addEventListener('click', function(event) {
+    while (gameboard.firstChild) {
+      gameboard.removeChild(gameboard.firstChild);
+    }
+    winnerLabel.classList.remove('visible');
+    setGameplay();
+    setupBoard();
+  })
+
+  // CHAT open btn is clicked
+  chatPopout.addEventListener('click', function(event) {
+    toggleCard();
+  });
 
     newCol.addEventListener('mouseout', function(event){ // hover out
       let bottomTile = landingTiles.get(event.currentTarget.id);
@@ -335,7 +348,8 @@ function videoGame() {
     newCol.addEventListener('click', function(event){ // clickeroo
       selectColumn(event.currentTarget.id);
     });
-  }) // end of forEach (A-G)
+  }
+
 
   // these happen when someone selects a column
   function selectColumn(col) {
