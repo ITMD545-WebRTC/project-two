@@ -83,17 +83,73 @@ video {
   width: 100%;
 }
 
-
 #call-button,
-#answer-button {
+#answer-button,
+#replay-btn {
   background-color: #13CD26;
   border-radius: 15px;
+  color: white;
+  padding: 0.5em 1em;
+  width: 100%;
+}
+
+#chat-open {
+  background-color: #FF4754;
+  border-radius: 0 0 15px 15px;
+  display: block;
   color: white;
   padding: 0.5em 1em;
 }
 
 #chat-panel {
-  display: none;
+  background-color: #FF4754;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  justify-content: space-between;
+  margin: auto;
+  overflow: hidden;
+  padding: 0.5em;
+  width: 70vw;
+}
+
+#message-container {
+  height: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin: 0 0 1em 0;
+}
+
+#message-container li {
+  color: white;
+  line-height: 1.3em;
+}
+
+#message-form {
+  display: flex;
+  height: 2em;
+  margin-bottom: 1em;
+  width: 100%;
+}
+
+#message-input {
+  border: none;
+  border-radius: 15px 0 0 15px;
+  display: block;
+  height: 100%;
+  padding: 0.3em 1em;
+  width: 100%;
+}
+
+#send-button {
+  border: none;
+  border-radius: 0 15px 15px 0;
+  color: #FF3341;
+  height: 125%;
 }
 
 /* gameboard */
@@ -161,6 +217,10 @@ video {
     max-height: 100vh;
   }
 
+  #chat-open {
+    display: none;
+  }
+
   /* video screens*/
   video {
     margin-bottom: 1em;
@@ -176,52 +236,18 @@ video {
 
   /* chat history and text box */
   #chat-panel {
-    background-color: #FF4754;
-    border-radius: 15px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex-direction: column-reverse;
     height: 40%;
+    margin: unset;
     margin-top: 5vh;
     max-height: 40%;
-    overflow: hidden;
-    padding: 0.5em;
+    width: unset;
   }
 
   #message-container {
-    height: 100%;
-    max-height: 100%;
-    overflow-y: scroll;
+    flex-direction: column-reverse;
   }
-
-  #message-container li {
-    color: white;
-    line-height: 1.3em;
-  }
-
-  #message-form {
-    display: flex;
-    height: 2em;
-    margin-bottom: 1em;
-    width: 100%;
-  }
-
-  #message-input {
-    border: none;
-    border-radius: 15px 0 0 15px;
-    display: block;
-    height: 100%;
-    padding: 0.3em 1em;
-    width: 100%;
-  }
-
-  #send-button {
-    border: none;
-    border-radius: 0 15px 15px 0;
-    color: #FF3341;
-    height: 125%;
-  }
-
 }
 
 @media (min-width: 1500px) {
