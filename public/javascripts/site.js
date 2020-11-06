@@ -322,6 +322,15 @@ function videoGame() {
     landingTiles.set(col, vacantTiles.get(col).pop());
   }
 
+  // update gameplay[][] with player marker
+  function updateGameplay(selectedTile) {
+      const colMap = new Map([['A',0], ['B',1], ['C',2], ['D',3], ['E',4], ['F',5], ['G',6]]);
+      let tileId = selectedTile.id;
+      let row = parseInt(tileId.charAt(1));
+      let col = colMap.get(tileId.charAt(0));
+      gameplay[row][col] = 'x';
+  }
+
 }; // end of IIFE
 
 videoGame();
