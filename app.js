@@ -24,8 +24,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 
 const namespaces = io.of(/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}$/);
-// create array of empty users
-const users = {};
 
 namespaces.on('connection', function(socket) {
   // 'namespace' is only for diagnostic purposes
@@ -43,25 +41,6 @@ namespaces.on('connection', function(socket) {
     // broadcast received signal so sender does not get its' own description/candidate
     socket.broadcast.emit('signal', { description, candidate });
   });
-});
-
-// create a connection socket for connected user
-io.on('connection', function(socket) {
-  // broadcasting user connection to client
-  socket.on('new-user', function(userName) {
-    users[socket.id] = userName;
-    socket.broadcast.emit('user-connected', userName);
-  })
-  // broadcast message to client
-  socket.on('send-chat-message', function(message) {
-    socket.broadcast.emit('chat-message', {message: message, name: users[socket.id] });
-  });
-  // broadcasting user disconnection from client
-  // deletes specific socket.id from users array
-  socket.on('disconnect', function() {
-    socket.broadcast.emit('user-disconnected', users[socket.id]);
-    delete users[socket.id];
-  })
 });
 
 // catch 404 and forward to error handler

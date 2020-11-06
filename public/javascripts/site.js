@@ -1,50 +1,22 @@
 'use strict'
 
-// location of where the socket will be hosted
-const socket = io('http://localhost:3000');
-// grabbing HTML element IDs
-const messageContainer = document.querySelector("#message-container")
-const messageForm = document.querySelector("#message-form");
-const messageInput = document.querySelector("#message-input");
-// immediately prompts user for a user name to enter chat
-const userName = prompt("Please enter user name");
-// appends message 'You joined' to container
-appendMessage("You joined");
-// sends this message to server indicating user has joined
-socket.emit('new-user', userName);
+// TODO: notify new user has connected/disconnected to already connected users in chat
+// TODO: format user messages to be able to distinguish user messages
 
 // formatting message sent from user - 'User: Message'
-socket.on('chat-message', function(data) {
-  appendMessage(`${data.name}: ${data.message}`);
-});
+// socket.on('chat-message', function(data) {
+//   appendMessage(`${data.name}: ${data.message}`);
+// });
 
 // append message to container if user connected
-socket.on('user-connected', function(userName) {
-  appendMessage(`${userName} connected`);
-});
+// socket.on('user-connected', function(userName) {
+//   appendMessage(`${userName} connected`);
+// });
 
 // append message to container if user disconnected
-socket.on('user-disconnected', function(userName) {
-  appendMessage(`${userName} disconnected`);
-});
-
-// appends messageinput value to message and emits to server as 'You'
-messageForm.addEventListener('submit', function(event) {
-  event.preventDefault();
-  const message = messageInput.value;
-  appendMessage(`You: ${message}`);
-  socket.emit('send-chat-message', message);
-  messageInput.value = "";
-});
-
-// append message function
-// appends message to new div message element
-// new div message element is then appended to the message container
-function appendMessage(message) {
-  const messageElement = document.createElement("li");
-  messageElement.innerText = message;
-  messageContainer.prepend(messageElement);
-};
+// socket.on('user-disconnected', function(userName) {
+//   appendMessage(`${userName} disconnected`);
+// });
 
 // namespace --> signaling channel (sc)
 var sc = io.connect('/' + NAMESPACE);
@@ -68,6 +40,81 @@ var clientIs = {
 var rtcConfig = null;
 // pc = peer connection
 var pc = new RTCPeerConnection(rtcConfig);
+
+// placeholder for data channel
+var dataChannel = null;
+
+// grabbing HTML DOM elements
+const messageContainer = document.querySelector("#message-container");
+const messageForm = document.querySelector("#message-form");
+const messageInput = document.querySelector("#message-input");
+const sendButton = document.querySelector("#send-button");
+
+// immediately prompts user for a user name to enter chat
+const userName = prompt("Please enter user name:");
+
+// appends message 'You have joined the room' to message container
+appendMessage(messageContainer, `${userName} has joined the room.`, 'self');
+
+// append message function
+// appends message to new message element
+// new message element is then appended to the message container
+function appendMessage(container, message, user) {
+  const messageElement = document.createElement("li");
+  const messageNode = document.createTextNode(message);
+  messageElement.className = user;
+  messageElement.appendChild(messageNode);
+  container.appendChild(messageElement);
+  if (messageContainer.scrollTo) {
+    messageContainer.scrollTo({
+      top: messageContainer.scrollHeight,
+      behavior: 'smooth'
+    });
+  } else {
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+  }
+};
+
+function addDataChannelEventListeners(datachannel) {
+  datachannel.onmessage = function(event) {
+    appendMessage(messageContainer, `${event.userName}: ${event.data}`, 'peer');
+  }
+  datachannel.onopen = function() {
+    // enabling message input and send button
+    sendButton.disabled = false;
+    messageInput.disabled = false;
+  }
+  datachannel.onclose = function() {
+    // disabling message input and send button
+    sendButton.disabled = true;
+    messageInput.disabled = true;
+  }
+  // appends messageinput value to message
+  messageForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const message = messageInput.value;
+    appendMessage(messageContainer, `You: ${message}`, 'self');
+    datachannel.send(message);
+    messageInput.value = "";
+  });
+}
+
+// polite 'peer' will open data channel when peerconnection has 'connected'
+pc.onconnectionstatechange = function(event) {
+  if (pc.connectionState == 'connected') {
+    if (clientIs.polite) {
+      dataChannel = pc.createDataChannel('text chat');
+      addDataChannelEventListeners(dataChannel);
+    }
+  }
+}
+
+// fires on receiving end of data channel connection
+// listen for the data channel on peer connection
+pc.ondatachannel = function(event) {
+  dataChannel = event.channel;
+  addDataChannelEventListeners(dataChannel);
+}
 
 // handle video streams
 // setting media constraints for video and audio
