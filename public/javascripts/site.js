@@ -271,6 +271,7 @@ function videoGame() {
   var gameplay;
   setGameplay();
   setupBoard();
+  isMobileView();
 
   function setGameplay() {
     gameplay = [['-', '-', '-', '-', '-', '-', '-'], // A1 = gameplay[0[0]]
@@ -324,6 +325,21 @@ function videoGame() {
       });
     }) // end of forEach (A-G)
   } // end of setup
+
+  window.onresize = isMobileView;
+
+  function isMobileView() {
+    if (window.screen.width <= 800) {
+      chatPanel.parentNode.removeChild(chatPanel);
+      var overlay = document.querySelector('#overlay');
+      overlay.append(chatPanel);
+    }
+    if (window.screen.width > 800) {
+      chatPanel.parentNode.removeChild(chatPanel);
+      var call = document.querySelector('#call');
+      call.append(chatPanel);
+    }
+  }
 
   // REPLAY button is clicked, reset everything
   replayBtn.addEventListener('click', function(event) {
