@@ -191,6 +191,29 @@ video {
   background-color: #FF1F2E;
 }
 
+#endgame {
+  display: none;
+}
+
+#endgame.visible {
+  display: block;
+}
+
+#winner-label {
+  background-color: #FFE74C;
+  font-weight: 600;
+  margin: 1em 0 0.5em 0;
+  padding: 1em 1em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#replay-btn {
+  display: block;
+  margin: auto;
+  width: 30%;
+}
+
 /* WIDE SCREEN STYLINGS  */
 @media (min-width: 800px) {
   h1 {
