@@ -340,13 +340,26 @@ function videoGame() {
     toggleCard();
   });
 
-    newCol.addEventListener('mouseout', function(event){ // hover out
-      let bottomTile = landingTiles.get(event.currentTarget.id);
-      bottomTile.firstChild.classList.remove('imaginer');
-    });
+  function toggleCard() {
+    var card = document.querySelector('#overlay');
+    card.classList.toggle('visible');
+    var page = document.querySelector('body');
+    page.classList.toggle('disable-scroll');
+  }
 
-    newCol.addEventListener('click', function(event){ // clickeroo
-      selectColumn(event.currentTarget.id);
+  // if the customize-overlay is on display,
+  // play this js
+  if (document.querySelector('#overlay')) {
+    var overlay = document.querySelector('#overlay');
+    // if there are any clicks happening on overlay
+    // check if it's from outside the form-card
+    overlay.addEventListener('click',function(event){
+      // Select the necessary elements from the DOM
+      var areaClicked = event.target;
+      console.log(areaClicked);
+      if (areaClicked == overlay) {
+        toggleCard();
+      }
     });
   }
 
