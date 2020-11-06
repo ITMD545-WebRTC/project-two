@@ -317,6 +317,8 @@ function videoGame() {
   function selectColumn(col) {
     var selectedTile = landingTiles.get(col);
     selectedTile.firstChild.classList.add('tiled');
+    updateGameplay(selectedTile);
+    checkWin();
     // remove last tile on the vacantTiles
     // assign last tile as the landingTile
     landingTiles.set(col, vacantTiles.get(col).pop());
