@@ -331,6 +331,119 @@ function videoGame() {
       gameplay[row][col] = 'x';
   }
 
+  function checkWin() {
+    var didWin = false;
+    for (let row = 5; row >= 0; row--) { // loop rows bottom to up
+      // if this row has no occupied tiles, skip it
+      if (didWin) { break; }
+
+      if (!gameplay[row].includes('x')) { // && !gameplay[row].includes('o')
+        continue;
+      }
+
+      for (let col = 0; col <= 6; col++) { // loop through columns
+        if (gameplay[row][col] == "x"){
+          if (checkNeighbors(row, col)) {
+            didWin = true;
+            break;
+          }
+        }
+      } // end of col loop
+    } // end of row loop
+  } // end of checkWin
+
+
+  function checkNeighbors(row, col) {
+    let count = 1;
+    if (checkUp(row, col, count) ||
+        checkUpRight(row, col, count) ||
+        checkRight(row, col, count) ||
+        checkDownRight(row, col, count)) {
+          cueWin();
+          return true;
+    }
+    return false;
+  } // end of checkNeighbors()
+
+  function checkToContinue(row, col, count) {
+    if (count == 4) {
+      console.log("the count is 4! T_T");
+      return true;
+    }
+    if (row < 0 || row > 5 || col < 0 || col > 6) {
+      return false;
+    }
+    return null;
+  }
+
+  function checkUp(row, col, count) {
+    let me = gameplay[row][col];
+    row = row - 1;
+    let willContinue = checkToContinue(row, col, count);
+    while (willContinue === null) {
+      let neighbor = gameplay[row][col];
+      if (neighbor != me) {
+        break;
+      }
+      count += 1;
+      row = row - 1;
+      willContinue = checkToContinue(row, col, count);
+    }
+    return willContinue;
+  }
+
+  function checkUpRight(row, col, count) {
+    let me = gameplay[row][col];
+    row = row - 1;
+    col = col + 1;
+    let willContinue = checkToContinue(row, col, count);
+    while (willContinue === null){
+      let neighbor = gameplay[row][col];
+      if (neighbor != me) {
+        break;
+      }
+      count += 1;
+      row = row - 1;
+      col = col + 1;
+      willContinue = checkToContinue(row, col, count);
+    }
+    return willContinue;
+  }
+
+  function checkRight(row, col, count) {
+    let me = gameplay[row][col];
+    col = col + 1;
+    let willContinue = checkToContinue(row, col, count);
+    while (willContinue === null) {
+      let neighbor = gameplay[row][col];
+      if (neighbor != me) {
+        break;
+      }
+      count += 1;
+      col = col + 1;
+      willContinue = checkToContinue(row, col, count);
+    }
+    return willContinue;
+  }
+
+  function checkDownRight(row, col, count) {
+    let me = gameplay[row][col];
+    row = row + 1;
+    col = col + 1;
+    let willContinue = checkToContinue(row, col, count);
+    while (willContinue === null) {
+      let neighbor = gameplay[row][col];
+      if (neighbor != me) {
+        break;
+      }
+      count += 1;
+      row = row + 1;
+      col = col + 1;
+      willContinue = checkToContinue(row, col, count);
+    }
+    return willContinue;
+  }
+
 }; // end of IIFE
 
 videoGame();
