@@ -25,13 +25,19 @@ block content
       button#call-button Start Call
 
       section#chat-panel
-        form#message-form(action="")
-          input#message-input(type="text")
-          button#send-button(type="submit") Send
         ul#message-container
+        form#message-form(action="")
+          input#message-input(type="text" disabled="false" autocomplete="off")
+          button#send-button(type="submit" disabled="false") Send
 
     section#board
       article#gameboard
+      button#chat-open Chat
+      article#endgame
+        p#winner-label Winner Winner Chicken Dinner
+        button#replay-btn Play Again
+
+  section#overlay
 
   script.
      window.NAMESPACE = "#{namespace}";

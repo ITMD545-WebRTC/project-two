@@ -67,6 +67,10 @@ main {
   width: 80%;
 }
 
+#call {
+  margin-bottom: 2em;
+}
+
 /* video screens */
 .videos-container {
   display: grid;
@@ -83,17 +87,73 @@ video {
   width: 100%;
 }
 
-
 #call-button,
-#answer-button {
+#answer-button,
+#replay-btn {
   background-color: #13CD26;
   border-radius: 15px;
+  color: white;
+  padding: 0.5em 1em;
+  width: 100%;
+}
+
+#chat-open {
+  background-color: #FF4754;
+  border-radius: 0 0 15px 15px;
+  display: block;
   color: white;
   padding: 0.5em 1em;
 }
 
 #chat-panel {
-  display: none;
+  background-color: #FF4754;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  justify-content: space-between;
+  margin: auto;
+  overflow: hidden;
+  padding: 0.5em;
+  width: 70vw;
+}
+
+#message-container {
+  height: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin: 0 0 1em 0;
+}
+
+#message-container li {
+  color: white;
+  line-height: 1.3em;
+}
+
+#message-form {
+  display: flex;
+  height: 2em;
+  margin-bottom: 1em;
+  width: 100%;
+}
+
+#message-input {
+  border: none;
+  border-radius: 15px 0 0 15px;
+  display: block;
+  height: 100%;
+  padding: 0.3em 1em;
+  width: 100%;
+}
+
+#send-button {
+  border: none;
+  border-radius: 0 15px 15px 0;
+  color: #FF3341;
+  height: 125%;
 }
 
 /* gameboard */
@@ -135,6 +195,53 @@ video {
   background-color: #FF1F2E;
 }
 
+#endgame {
+  display: none;
+}
+
+#endgame.visible {
+  display: block;
+}
+
+#winner-label {
+  background-color: #FFE74C;
+  font-weight: 600;
+  margin: 1em 0 0.5em 0;
+  padding: 1em 1em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#replay-btn {
+  display: block;
+  margin: auto;
+  width: 30%;
+}
+
+/* card container */
+#overlay {
+  display: none;
+  left: 0;
+  top: 0;
+  overflow-y: scroll;
+  width: 100%;
+  height: 100%;
+  padding: 2em 0;
+  position: fixed;
+  background-color: rgba(255,255,255,0.7);
+}
+
+/* displays section that holds card */
+#overlay.visible {
+  display: block;
+}
+
+/* disable background scrolling */
+body.disable-scroll {
+  position: absolute;
+  overflow: hidden;
+}
+
 /* WIDE SCREEN STYLINGS  */
 @media (min-width: 800px) {
   h1 {
@@ -161,6 +268,10 @@ video {
     max-height: 100vh;
   }
 
+  #chat-open {
+    display: none;
+  }
+
   /* video screens*/
   video {
     margin-bottom: 1em;
@@ -176,52 +287,18 @@ video {
 
   /* chat history and text box */
   #chat-panel {
-    background-color: #FF4754;
-    border-radius: 15px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex-direction: column-reverse;
     height: 40%;
+    margin: unset;
     margin-top: 5vh;
     max-height: 40%;
-    overflow: hidden;
-    padding: 0.5em;
+    width: unset;
   }
 
   #message-container {
-    height: 100%;
-    max-height: 100%;
-    overflow-y: scroll;
+    flex-direction: column-reverse;
   }
-
-  #message-container li {
-    color: white;
-    line-height: 1.3em;
-  }
-
-  #message-form {
-    display: flex;
-    height: 2em;
-    margin-bottom: 1em;
-    width: 100%;
-  }
-
-  #message-input {
-    border: none;
-    border-radius: 15px 0 0 15px;
-    display: block;
-    height: 100%;
-    padding: 0.3em 1em;
-    width: 100%;
-  }
-
-  #send-button {
-    border: none;
-    border-radius: 0 15px 15px 0;
-    color: #FF3341;
-    height: 125%;
-  }
-
 }
 
 @media (min-width: 1500px) {
