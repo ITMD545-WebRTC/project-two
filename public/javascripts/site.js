@@ -227,7 +227,14 @@ sc.on('signal', async function({ candidate, description }) {
       }
 
       // Set the remote description
-      await pc.setRemoteDescription(description);
+      try {
+        console.log("Setting a remote description:", description);
+        clientIs.settingRemoteAnswerPending = description.type == "answer";
+        await pc.setRemoteDescription(description);
+        clientIs.settingRemoteAnswerPending = false;
+      } catch(error) {
+        console.error("Error setting local description:", error);
+      }
 
       // if its an offer, we need to answer it
       if (description.type == 'offer') {
