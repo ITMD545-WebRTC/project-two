@@ -245,11 +245,22 @@ sc.on('signal', async function({ candidate, description }) {
             await pc.setLocalDescription();
           } catch (error) {
             // Older browsers are NOT ok. So because we're handling an
-            // offer, we need to prepare ans answer:
-            var answer = await pc.createAnswer();
-            await pc.setLocalDescription(new RTCSessionDescription(answer));
+            // offer, we need to prepare an answer:
+            console.log("Falling back to older setLocalDescription");
+            if (pc.signalingState == 'have-remote-offer') {
+              // create answer if necessary
+              console.log("Attempting to prepare answer:");
+              var offer = await pc.createAnswer();
+            } else {
+              // else, create offer
+              console.log("Attempting to prepare offer:");
+              var offer = await pc.createOffer();
+            }
+            // await pc.setLocalDescription(new RTCSessionDescription(answer));
+            await pc.setLocalDescription(offer);
           } finally {
-              sc.emit('signal', { description: pc.localDescription});
+            console.log("Sending a response:", pc.localDescription);
+              sc.emit('signal', { description: pc.localDescription });
           }
       }
 
@@ -258,8 +269,14 @@ sc.on('signal', async function({ candidate, description }) {
       console.log(candidate);
       // Save Safari and other browsers that can't handle an
       // empty string for the `candidate.candidate` value:
-      if (candidate.candidate.length > 1) {
-        await pc.addIceCandidate(candidate);
+      try {
+        if (candidate.candidate.length > 1) {
+          await pc.addIceCandidate(candidate);
+        }
+      } catch (error) {
+        if (!clientIs.ignoringOffer) {
+          throw error;
+        }
       }
     }
   } catch (error) {
