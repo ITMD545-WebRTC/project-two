@@ -43,12 +43,14 @@ var pc = new RTCPeerConnection(rtcConfig);
 
 // placeholder for data channel
 var dataChannel = null;
+var dc = null;
 
 // grabbing HTML DOM elements
 const messageContainer = document.querySelector("#message-container");
 const messageForm = document.querySelector("#message-form");
 const messageInput = document.querySelector("#message-input");
 const sendButton = document.querySelector("#send-button");
+const tileInput = document.getElementsByClassName("circle imaginer tiled");
 
 // immediately prompts user for a user name to enter chat
 const userName = prompt("Please enter user name:");
@@ -75,16 +77,16 @@ function appendMessage(container, message, user) {
   }
 };
 
-function addDataChannelEventListeners(datachannel) {
-  datachannel.onmessage = function(event) {
+function addDataChannelEventListeners(dataChannel) {
+  dataChannel.onmessage = function(event) {
     appendMessage(messageContainer, `${event.userName}: ${event.data}`, 'peer');
   }
-  datachannel.onopen = function() {
+  dataChannel.onopen = function() {
     // enabling message input and send button
     sendButton.disabled = false;
     messageInput.disabled = false;
   }
-  datachannel.onclose = function() {
+  dataChannel.onclose = function() {
     // disabling message input and send button
     sendButton.disabled = true;
     messageInput.disabled = true;
@@ -94,10 +96,25 @@ function addDataChannelEventListeners(datachannel) {
     event.preventDefault();
     const message = messageInput.value;
     appendMessage(messageContainer, `You: ${message}`, 'self');
-    datachannel.send(message);
+    dataChannel.send(message);
     messageInput.value = "";
   });
 }
+
+// function addDCEventListeners(dc) {
+//   dc.onmessage = function(event) {
+//     console.log("See peer moves: ");
+//     console.log(`${event.data}`);
+//     videoGame.selectColumn(`${event.data}`);
+//   }
+//   gameboard.addEventListener('click', function(event) {
+//     event.preventDefault();
+//     const selectedTileCol = tileInput.item(0).parentElement.parentElement.id;
+//     //console.log(selectedTile);
+//     //selectColumn(selectedTile, `${selectedTileCol}`, 'self');
+//     dc.send(selectedTileCol);
+//   });
+// }
 
 // polite 'peer' will open data channel when peerconnection has 'connected'
 pc.onconnectionstatechange = function(event) {
@@ -105,6 +122,8 @@ pc.onconnectionstatechange = function(event) {
     if (clientIs.polite) {
       dataChannel = pc.createDataChannel('text chat');
       addDataChannelEventListeners(dataChannel);
+      //dc = pc.createDataChannel('gameChannel');
+      //addDCEventListeners(dc);
     }
   }
 }
@@ -114,6 +133,8 @@ pc.onconnectionstatechange = function(event) {
 pc.ondatachannel = function(event) {
   dataChannel = event.channel;
   addDataChannelEventListeners(dataChannel);
+  //dc = event.channel;
+  //addDCEventListeners(dc);
 }
 
 // handle video streams
@@ -389,8 +410,9 @@ function videoGame() {
     // remove last tile on the vacantTiles
     // assign last tile as the landingTile
     landingTiles.set(col, vacantTiles.get(col).pop());
+    //return selectedTile;
   }
-
+  videoGame.selectColumn = selectColumn;
   // update gameplay[][] with player marker
   function updateGameplay(selectedTile) {
       const colMap = new Map([['A',0], ['B',1], ['C',2], ['D',3], ['E',4], ['F',5], ['G',6]]);
