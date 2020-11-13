@@ -38,7 +38,23 @@ var clientIs = {
 };
 
 // eventual setup of STUN servers
-var rtcConfig = null;
+// var rtcConfig = null;
+
+// setting up google STUN servers
+var rtcConfig = {
+  stunServers: [
+    {
+      urls: [
+        'stun:stun.l.google.com:19302',
+        'stun:stun1.l.google.com:19302',
+        'stun:stun2.l.google.com:19302',
+        'stun:stun3.l.google.com:19302',
+        'stun:stun4.l.google.com:19302'
+      ]
+    }
+  ]
+};
+
 // pc = peer connection
 var pc = new RTCPeerConnection(rtcConfig);
 
