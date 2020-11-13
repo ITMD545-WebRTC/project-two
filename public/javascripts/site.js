@@ -33,7 +33,8 @@ var clientIs = {
   // impolite makes connection accept offer regardless
   // only one side of connection needs to be polite
   // polite accepts offer even though it may already have one
-  polite: false
+  polite: false,
+  settingRemoteAnswerPending: false
 };
 
 // eventual setup of STUN servers
@@ -212,8 +213,13 @@ sc.on('signal', async function({ candidate, description }) {
   try {
     if (description) {
       console.log('Recieved a description');
-      var offerCollision = (description.type == 'offer') &&
-                           (clientIs.makingOffer || pc.signalingState != 'stable')
+      // var offerCollision = (description.type == 'offer') &&
+      //                      (clientIs.makingOffer || pc.signalingState != 'stable')
+      // clientIs.ignoringOffer = !clientIs.polite && offerCollision;
+
+      var readyForOffer = !clientIs.makingOffer && 
+                          (pc.signalingState == "stable" || clientIs.settingRemoteAnswerPending);
+      var offerCollision = description.type == "answer" && !readyForOffer;
       clientIs.ignoringOffer = !clientIs.polite && offerCollision;
 
       if (clientIs.ignoringOffer) {
