@@ -42,7 +42,7 @@ var clientIs = {
 
 // setting up google STUN servers
 var rtcConfig = {
-  stunServers: [
+  iceServers: [
     {
       urls: [
         'stun:stun.l.google.com:19302',
