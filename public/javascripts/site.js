@@ -101,20 +101,21 @@ function addDataChannelEventListeners(dataChannel) {
   });
 }
 
-// function addDCEventListeners(dc) {
-//   dc.onmessage = function(event) {
-//     console.log("See peer moves: ");
-//     console.log(`${event.data}`);
-//     videoGame.selectColumn(`${event.data}`);
-//   }
-//   gameboard.addEventListener('click', function(event) {
-//     event.preventDefault();
-//     const selectedTileCol = tileInput.item(0).parentElement.parentElement.id;
-//     //console.log(selectedTile);
-//     //selectColumn(selectedTile, `${selectedTileCol}`, 'self');
-//     dc.send(selectedTileCol);
-//   });
-// }
+function addDCEventListeners(dc) {
+  dc.onmessage = function(event) {
+    console.log("See peer moves: ");
+    console.log(`${event.data}`);
+    videoGame.selectedColumn(`${event.data}`);
+  }
+  gameboard.addEventListener('click', function(event) {
+    event.preventDefault();
+    const selectedTileCol = tileInput.item(0).parentElement.parentElement.id;
+    console.log('Your Move: ');
+    console.log(selectedTileCol);
+    //selectColumn(selectedTile, `${selectedTileCol}`, 'self');
+    dc.send(selectedTileCol);
+  });
+}
 
 // polite 'peer' will open data channel when peerconnection has 'connected'
 pc.onconnectionstatechange = function(event) {
@@ -122,8 +123,8 @@ pc.onconnectionstatechange = function(event) {
     if (clientIs.polite) {
       dataChannel = pc.createDataChannel('text chat');
       addDataChannelEventListeners(dataChannel);
-      //dc = pc.createDataChannel('gameChannel');
-      //addDCEventListeners(dc);
+      dc = pc.createDataChannel('gameChannel');
+      addDCEventListeners(dc);
     }
   }
 }
@@ -133,8 +134,8 @@ pc.onconnectionstatechange = function(event) {
 pc.ondatachannel = function(event) {
   dataChannel = event.channel;
   addDataChannelEventListeners(dataChannel);
-  //dc = event.channel;
-  //addDCEventListeners(dc);
+  dc = event.channel;
+  addDCEventListeners(dc);
 }
 
 // handle video streams
@@ -412,7 +413,19 @@ function videoGame() {
     landingTiles.set(col, vacantTiles.get(col).pop());
     //return selectedTile;
   }
-  videoGame.selectColumn = selectColumn;
+
+  // these happen when peer selects a column
+  function selectedColumn(col) {
+    var selectedTile = landingTiles.get(col);
+    selectedTile.firstChild.classList.add('tiled-two');
+    updateGameplay(selectedTile);
+    checkWin();
+    // remove last tile on the vacantTiles
+    // assign last tile as the landingTile
+    landingTiles.set(col, vacantTiles.get(col).pop());
+    //return selectedTile;
+  }
+  videoGame.selectedColumn = selectedColumn;
   // update gameplay[][] with player marker
   function updateGameplay(selectedTile) {
       const colMap = new Map([['A',0], ['B',1], ['C',2], ['D',3], ['E',4], ['F',5], ['G',6]]);
