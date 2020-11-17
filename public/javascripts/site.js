@@ -33,11 +33,28 @@ var clientIs = {
   // impolite makes connection accept offer regardless
   // only one side of connection needs to be polite
   // polite accepts offer even though it may already have one
-  polite: false
+  polite: false,
+  settingRemoteAnswerPending: false
 };
 
 // eventual setup of STUN servers
-var rtcConfig = null;
+// var rtcConfig = null;
+
+// setting up google STUN servers
+var rtcConfig = {
+  iceServers: [
+    {
+      urls: [
+        'stun:stun.l.google.com:19302',
+        'stun:stun1.l.google.com:19302',
+        'stun:stun2.l.google.com:19302',
+        'stun:stun3.l.google.com:19302',
+        'stun:stun4.l.google.com:19302'
+      ]
+    }
+  ]
+};
+
 // pc = peer connection
 var pc = new RTCPeerConnection(rtcConfig);
 
@@ -233,8 +250,13 @@ sc.on('signal', async function({ candidate, description }) {
   try {
     if (description) {
       console.log('Recieved a description');
-      var offerCollision = (description.type == 'offer') &&
-                           (clientIs.makingOffer || pc.signalingState != 'stable')
+      // var offerCollision = (description.type == 'offer') &&
+      //                      (clientIs.makingOffer || pc.signalingState != 'stable')
+      // clientIs.ignoringOffer = !clientIs.polite && offerCollision;
+
+      var readyForOffer = !clientIs.makingOffer && 
+                          (pc.signalingState == "stable" || clientIs.settingRemoteAnswerPending);
+      var offerCollision = description.type == "answer" && !readyForOffer;
       clientIs.ignoringOffer = !clientIs.polite && offerCollision;
 
       if (clientIs.ignoringOffer) {
@@ -242,7 +264,14 @@ sc.on('signal', async function({ candidate, description }) {
       }
 
       // Set the remote description
-      await pc.setRemoteDescription(description);
+      try {
+        console.log("Setting a remote description:", description);
+        clientIs.settingRemoteAnswerPending = description.type == "answer";
+        await pc.setRemoteDescription(description);
+        clientIs.settingRemoteAnswerPending = false;
+      } catch(error) {
+        console.error("Error setting local description:", error);
+      }
 
       // if its an offer, we need to answer it
       if (description.type == 'offer') {
@@ -253,11 +282,22 @@ sc.on('signal', async function({ candidate, description }) {
             await pc.setLocalDescription();
           } catch (error) {
             // Older browsers are NOT ok. So because we're handling an
-            // offer, we need to prepare ans answer:
-            var answer = await pc.createAnswer();
-            await pc.setLocalDescription(new RTCSessionDescription(answer));
+            // offer, we need to prepare an answer:
+            console.log("Falling back to older setLocalDescription");
+            if (pc.signalingState == 'have-remote-offer') {
+              // create answer if necessary
+              console.log("Attempting to prepare answer:");
+              var offer = await pc.createAnswer();
+            } else {
+              // else, create offer
+              console.log("Attempting to prepare offer:");
+              var offer = await pc.createOffer();
+            }
+            // await pc.setLocalDescription(new RTCSessionDescription(answer));
+            await pc.setLocalDescription(offer);
           } finally {
-              sc.emit('signal', { description: pc.localDescription});
+            console.log("Sending a response:", pc.localDescription);
+              sc.emit('signal', { description: pc.localDescription });
           }
       }
 
@@ -266,8 +306,14 @@ sc.on('signal', async function({ candidate, description }) {
       console.log(candidate);
       // Save Safari and other browsers that can't handle an
       // empty string for the `candidate.candidate` value:
-      if (candidate.candidate.length > 1) {
-        await pc.addIceCandidate(candidate);
+      try {
+        if (candidate.candidate.length > 1) {
+          await pc.addIceCandidate(candidate);
+        }
+      } catch (error) {
+        if (!clientIs.ignoringOffer) {
+          throw error;
+        }
       }
     }
   } catch (error) {
