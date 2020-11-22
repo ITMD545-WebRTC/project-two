@@ -122,12 +122,13 @@ function addDataChannelEventListeners(dataChannel) {
     messageInput.value = "";
   });
 }
-//Recieved data from peer 
+//Recieved data from peer
 function addDCEventListeners(dc) {
   dc.onmessage = function(event) {
     console.log("See peer moves: ");
     console.log(`${event.data}`);
     videoGame.selectedColumn(`${event.data}`);
+    player.canFire = true;
   }
 }
 
@@ -138,7 +139,7 @@ pc.onconnectionstatechange = function(event) {
       dataChannel = pc.createDataChannel('text chat');
       addDataChannelEventListeners(dataChannel);
       dc = pc.createDataChannel('gameChannel');
-      addDCEventListeners(dc);
+      addDCEventListeners(dc, false);
     }
   }
 }
@@ -151,7 +152,7 @@ pc.ondatachannel = function(event) {
   addDataChannelEventListeners(dataChannel);
 } else if (event.channel.label == 'gameChannel'){
   dc = event.channel;
-  addDCEventListeners(dc);
+  addDCEventListeners(dc, true);
 }
 }
 
@@ -257,7 +258,7 @@ sc.on('signal', async function({ candidate, description }) {
 
       var readyForOffer = !clientIs.makingOffer &&
                           (pc.signalingState == "stable" || clientIs.settingRemoteAnswerPending);
-      var offerCollision = description.type == "answer" && !readyForOffer;
+      var offerCollision = description.type == "offer" && !readyForOffer;
       clientIs.ignoringOffer = !clientIs.polite && offerCollision;
 
       if (clientIs.ignoringOffer) {
@@ -327,7 +328,7 @@ pc.onicecandidate = function({candidate}) {
   sc.emit('signal', { candidate: candidate});
 }
 
-function videoGame() {
+function videoGame(firesFirst) {
   // declare arrays and maps to keep track of gameplay
   // const gameboard = document.querySelector('#gameboard');
   // const chatPanel = document.querySelector('#chat-panel');
@@ -337,9 +338,13 @@ function videoGame() {
   var landingTiles = new Map();
   var vacantTiles = new Map();
   var gameplay;
+  var player = {
+    canFire: firesFirst
+  };
   setGameplay();
   setupBoard();
   isMobileView();
+
 
   function setGameplay() {
     gameplay = [['-', '-', '-', '-', '-', '-', '-'], // A1 = gameplay[0[0]]
@@ -391,6 +396,10 @@ function videoGame() {
       newCol.addEventListener('click', function(event){ // clickeroo
         selectColumn(event.currentTarget.id);
         dc.send(event.currentTarget.id);
+        if (!player.canFire){
+          return;
+        }
+        player.canFire = false;
       });
     }) // end of forEach (A-G)
   } // end of setup
