@@ -301,6 +301,15 @@ body.disable-scroll {
   }
 }
 
+ul[class="textMessage"] > li{
+  background-color: #35A7FF;
+  border: 1px solid pink;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 3px 3px;
+  display: inline-block !important;
+}
+
 @media (min-width: 1500px) {
   body {
     padding: 5vh 12vw;

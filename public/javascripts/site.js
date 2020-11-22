@@ -233,7 +233,7 @@ sc.on('signal', async function({ candidate, description }) {
       //                      (clientIs.makingOffer || pc.signalingState != 'stable')
       // clientIs.ignoringOffer = !clientIs.polite && offerCollision;
 
-      var readyForOffer = !clientIs.makingOffer && 
+      var readyForOffer = !clientIs.makingOffer &&
                           (pc.signalingState == "stable" || clientIs.settingRemoteAnswerPending);
       var offerCollision = description.type == "answer" && !readyForOffer;
       clientIs.ignoringOffer = !clientIs.polite && offerCollision;
