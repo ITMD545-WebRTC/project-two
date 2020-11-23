@@ -189,11 +189,13 @@ video {
   position: absolute;
 }
 
-.imaginer,
-.tiled {
+.imagine-red,
+.tiled-red {
   background-color: #FF1F2E;
 }
-.tiled-two {
+
+.imagine-yellow,
+.tiled-yellow {
   background-color: #FFFF00;
 }
 
