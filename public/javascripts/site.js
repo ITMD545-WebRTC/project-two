@@ -67,12 +67,6 @@ const messageContainer = document.querySelector("#message-container");
 const messageForm = document.querySelector("#message-form");
 const messageInput = document.querySelector("#message-input");
 const sendButton = document.querySelector("#send-button");
-const tileInput = document.getElementsByClassName("circle imaginer tiled");
-const gameboard = document.querySelector('#gameboard');
-const chatPanel = document.querySelector('#chat-panel');
-const winnerLabel = document.querySelector('#endgame');
-const replayBtn = document.querySelector('#replay-btn');
-const chatPopout = document.querySelector('#chat-open');
 
 // immediately prompts user for a user name to enter chat
 const userName = prompt("Please enter user name:");
@@ -328,19 +322,16 @@ pc.onicecandidate = function({candidate}) {
   sc.emit('signal', { candidate: candidate});
 }
 
-function videoGame(firesFirst) {
+function videoGame() {
   // declare arrays and maps to keep track of gameplay
-  // const gameboard = document.querySelector('#gameboard');
-  // const chatPanel = document.querySelector('#chat-panel');
-  // const winnerLabel = document.querySelector('#endgame');
-  // const replayBtn = document.querySelector('#replay-btn');
-  // const chatPopout = document.querySelector('#chat-open');
+  const gameboard = document.querySelector('#gameboard');
+  const chatPanel = document.querySelector('#chat-panel');
+  const winnerLabel = document.querySelector('#endgame');
+  const replayBtn = document.querySelector('#replay-btn');
+  const chatPopout = document.querySelector('#chat-open');
   var landingTiles = new Map();
   var vacantTiles = new Map();
-  var gameplay;
-  var player = {
-    canFire: firesFirst
-  };
+  var gameplay; // 2d array of game progress
   setGameplay();
   setupBoard();
   isMobileView();
