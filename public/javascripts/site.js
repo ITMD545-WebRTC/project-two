@@ -142,13 +142,14 @@ function addDataChannelEventListeners(dataChannel) {
     messageInput.value = "";
   });
 }
+
 //Recieved data from peer
 function addDCEventListeners(dc) {
   dc.onmessage = function(event) {
     console.log("See peer moves: ");
     console.log(`${event.data}`);
-    videoGame.selectedColumn(`${event.data}`);
-    player.canFire = true;
+    // updates gameplay accdg to opponent's move
+    videoGame.selectColumn(event.data, player.opp);
   }
 }
 
@@ -159,7 +160,7 @@ pc.onconnectionstatechange = function(event) {
       dataChannel = pc.createDataChannel('text chat');
       addDataChannelEventListeners(dataChannel);
       dc = pc.createDataChannel('gameChannel');
-      addDCEventListeners(dc, false);
+      addDCEventListeners(dc);
     }
   }
 }
