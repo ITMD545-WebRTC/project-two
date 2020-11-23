@@ -414,12 +414,12 @@ function videoGame() {
       });
 
       newCol.addEventListener('click', function(event){ // clickeroo
-        selectColumn(event.currentTarget.id);
-        dc.send(event.currentTarget.id);
-        if (!player.canFire){
+        // selectColumn(event.currentTarget.id);
+        if (player.canFire){
+          selectColumn(event.currentTarget.id, player.color);
+          dc.send(event.currentTarget.id);
           return;
         }
-        player.canFire = false;
       });
     }) // end of forEach (A-G)
   } // end of setup
