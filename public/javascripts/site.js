@@ -94,7 +94,7 @@ function appendMessage(container, message, user) {
 
 function addDataChannelEventListeners(datachannel) {
   datachannel.onmessage = function(event) {
-    appendMessage(messageContainer, `${event.userName}: ${event.data}`, 'peer');
+    appendMessage(messageContainer, `${event.data}`, 'peer');
   }
   datachannel.onopen = function() {
     // enabling message input and send button
@@ -110,7 +110,7 @@ function addDataChannelEventListeners(datachannel) {
   messageForm.addEventListener('submit', function(event) {
     event.preventDefault();
     const message = messageInput.value;
-    appendMessage(messageContainer, `${userName}: ${message}`, 'self');
+    appendMessage(messageContainer, `${message}`, 'self');
     datachannel.send(message);
     messageInput.value = "";
   });
