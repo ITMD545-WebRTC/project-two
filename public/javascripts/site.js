@@ -499,14 +499,18 @@ function videoGame() {
       gameplay[row][col] = marker; // player1: x, player2: o
   }
 
-  function cueWin() {
+  function cueWin(marker) {
     console.log('ya win');
     var cols = document.querySelectorAll('#gameboard > ul');
+    var message = document.querySelector('#winner-label');
     cols.forEach((col, i) => {
       col.removeEventListener('click', function(event){ // remove clickeroo
-        selectColumn(event.currentTarget.id);
+        selectColumn(event.currentTarget.id, player.marker);
       });
-    });
+    }); // TODO: Gotta fix this
+    if (marker != player.marker) {
+      message.innerHTML = "Ya did pretty good. Wanna try again?";
+    }
     winnerLabel.classList.add('visible');
   }
 
