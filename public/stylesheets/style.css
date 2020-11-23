@@ -121,16 +121,31 @@ video {
 #message-container {
   height: 100%;
   max-height: 100%;
-  overflow-y: scroll;
+  overflow: scroll;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  flex-flow: column nowrap;
+  /* flex-direction: column; */
+  /* justify-content: flex-end; */
   margin: 0 0 1em 0;
+}
+
+.peer {
+  margin-right: auto;
+  background-color: #8735FF;
+}
+
+.self {
+  margin-left: auto;
+  background-color: #35A7FF;
 }
 
 #message-container li {
   color: white;
   line-height: 1.3em;
+  border: 1px solid pink;
+  border-radius: 10px;
+  padding: 5px;
+  margin-top: 4px;
 }
 
 #message-form {
@@ -297,17 +312,8 @@ body.disable-scroll {
   }
 
   #message-container {
-    flex-direction: column-reverse;
+    /* flex-direction: column-reverse; */
   }
-}
-
-ul[class="textMessage"] > li{
-  background-color: #35A7FF;
-  border: 1px solid pink;
-  border-radius: 10px;
-  padding: 5px;
-  margin: 3px 3px;
-  display: inline-block !important;
 }
 
 @media (min-width: 1500px) {

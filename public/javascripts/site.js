@@ -110,7 +110,7 @@ function addDataChannelEventListeners(datachannel) {
   messageForm.addEventListener('submit', function(event) {
     event.preventDefault();
     const message = messageInput.value;
-    appendMessage(messageContainer, `You: ${message}`, 'self');
+    appendMessage(messageContainer, `${userName}: ${message}`, 'self');
     datachannel.send(message);
     messageInput.value = "";
   });
