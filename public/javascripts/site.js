@@ -60,12 +60,39 @@ var pc = new RTCPeerConnection(rtcConfig);
 
 // placeholder for data channel
 var dataChannel = null;
+var dc = null;
 
 // grabbing HTML DOM elements
 const messageContainer = document.querySelector("#message-container");
 const messageForm = document.querySelector("#message-form");
 const messageInput = document.querySelector("#message-input");
 const sendButton = document.querySelector("#send-button");
+
+var player = {
+  turn: 0,
+  canFire: false,
+  color: null,
+  opp: null,
+  marker: null
+};
+
+function setUserAsPlayer(playerTurn) {
+  if (playerTurn == 1) {
+    player.turn = 1;
+    player.canFire = true;
+    player.color = 'red';
+    player.opp = 'yellow';
+    player.marker = 'x';
+    return;
+  } if (playerTurn == 2) {
+    player.turn = 2;
+    player.canFire = false;
+    player.color = 'yellow';
+    player.opp = 'red';
+    player.marker = 'o';
+    return;
+  }
+}
 
 // immediately prompts user for a user name to enter chat
 const userName = prompt("Please enter user name:");
@@ -96,12 +123,12 @@ function addDataChannelEventListeners(datachannel) {
   datachannel.onmessage = function(event) {
     appendMessage(messageContainer, `${event.data}`, 'peer');
   }
-  datachannel.onopen = function() {
+  dataChannel.onopen = function() {
     // enabling message input and send button
     sendButton.disabled = false;
     messageInput.disabled = false;
   }
-  datachannel.onclose = function() {
+  dataChannel.onclose = function() {
     // disabling message input and send button
     sendButton.disabled = true;
     messageInput.disabled = true;
@@ -116,12 +143,24 @@ function addDataChannelEventListeners(datachannel) {
   });
 }
 
+//Recieved data from peer
+function addDCEventListeners(dc) {
+  dc.onmessage = function(event) {
+    console.log("See peer moves: ");
+    console.log(`${event.data}`);
+    // updates gameplay accdg to opponent's move
+    videoGame.selectColumn(event.data, player.opp);
+  }
+}
+
 // polite 'peer' will open data channel when peerconnection has 'connected'
 pc.onconnectionstatechange = function(event) {
   if (pc.connectionState == 'connected') {
     if (clientIs.polite) {
       dataChannel = pc.createDataChannel('text chat');
       addDataChannelEventListeners(dataChannel);
+      dc = pc.createDataChannel('gameChannel');
+      addDCEventListeners(dc);
     }
   }
 }
@@ -129,8 +168,13 @@ pc.onconnectionstatechange = function(event) {
 // fires on receiving end of data channel connection
 // listen for the data channel on peer connection
 pc.ondatachannel = function(event) {
+  if(event.channel.label == 'text chat'){
   dataChannel = event.channel;
   addDataChannelEventListeners(dataChannel);
+  } else if (event.channel.label == 'gameChannel') {
+    dc = event.channel;
+    addDCEventListeners(dc);
+  }
 }
 
 // handle video streams
@@ -182,6 +226,7 @@ function startCall() {
   sc.emit("calling");
   startStream();
   negotiateConnection();
+  setUserAsPlayer(1);
 };
 
 // handling receiving connection
@@ -196,6 +241,7 @@ sc.on('calling', function() {
     callButton.hidden = true;
     startStream();
   });
+  setUserAsPlayer(2);
 });
 
 // Setting up the peer connection
@@ -235,7 +281,7 @@ sc.on('signal', async function({ candidate, description }) {
 
       var readyForOffer = !clientIs.makingOffer &&
                           (pc.signalingState == "stable" || clientIs.settingRemoteAnswerPending);
-      var offerCollision = description.type == "answer" && !readyForOffer;
+      var offerCollision = description.type == "offer" && !readyForOffer;
       clientIs.ignoringOffer = !clientIs.polite && offerCollision;
 
       if (clientIs.ignoringOffer) {
@@ -314,10 +360,11 @@ function videoGame() {
   const chatPopout = document.querySelector('#chat-open');
   var landingTiles = new Map();
   var vacantTiles = new Map();
-  var gameplay;
+  var gameplay; // 2d array of game progress
   setGameplay();
   setupBoard();
   isMobileView();
+
 
   function setGameplay() {
     gameplay = [['-', '-', '-', '-', '-', '-', '-'], // A1 = gameplay[0[0]]
@@ -358,16 +405,21 @@ function videoGame() {
       // EVENT LISTENERS for each column
       newCol.addEventListener('mouseover', function(event){ // hover in
         let bottomTile = landingTiles.get(event.currentTarget.id);
-        bottomTile.firstChild.classList.add('imaginer');
+        bottomTile.firstChild.classList.add('imagine-' + player.color);
       });
 
       newCol.addEventListener('mouseout', function(event){ // hover out
         let bottomTile = landingTiles.get(event.currentTarget.id);
-        bottomTile.firstChild.classList.remove('imaginer');
+        bottomTile.firstChild.classList.remove('imagine-' + player.color);
       });
 
       newCol.addEventListener('click', function(event){ // clickeroo
-        selectColumn(event.currentTarget.id);
+        // selectColumn(event.currentTarget.id);
+        if (player.canFire){
+          selectColumn(event.currentTarget.id, player.color);
+          dc.send(event.currentTarget.id);
+          return;
+        }
       });
     }) // end of forEach (A-G)
   } // end of setup
@@ -425,51 +477,57 @@ function videoGame() {
     });
   }
 
-
   // these happen when someone selects a column
-  function selectColumn(col) {
+  function selectColumn(col, color) {
+    var marker = color == 'red' ? 'x' : 'o'
     var selectedTile = landingTiles.get(col);
-    selectedTile.firstChild.classList.add('tiled');
-    updateGameplay(selectedTile);
-    checkWin();
-    // remove last tile on the vacantTiles
-    // assign last tile as the landingTile
+    selectedTile.firstChild.classList.add('tiled-' + color);
+    updateGameplay(selectedTile, marker);
+    checkWin(marker);
+    // remove last tile on the vacantTiles, assign last tile as the landingTile
     landingTiles.set(col, vacantTiles.get(col).pop());
+    player.canFire = color == player.color ? false:true;
   }
+  videoGame.selectColumn = selectColumn;
 
   // update gameplay[][] with player marker
-  function updateGameplay(selectedTile) {
+  function updateGameplay(selectedTile, marker) {
       const colMap = new Map([['A',0], ['B',1], ['C',2], ['D',3], ['E',4], ['F',5], ['G',6]]);
       let tileId = selectedTile.id;
       let row = parseInt(tileId.charAt(1));
       let col = colMap.get(tileId.charAt(0));
-      gameplay[row][col] = 'x';
+      gameplay[row][col] = marker; // player1: x, player2: o
   }
 
-  function cueWin() {
+  function cueWin(marker) {
     console.log('ya win');
     var cols = document.querySelectorAll('#gameboard > ul');
+    var message = document.querySelector('#winner-label');
     cols.forEach((col, i) => {
       col.removeEventListener('click', function(event){ // remove clickeroo
-        selectColumn(event.currentTarget.id);
+        selectColumn(event.currentTarget.id, player.marker);
       });
-    });
+    }); // TODO: Gotta fix this
+    if (marker != player.marker) {
+      message.innerHTML = "Ya did pretty good. Wanna try again?";
+    }
     winnerLabel.classList.add('visible');
   }
 
-  function checkWin() {
+  function checkWin(marker) {
     var didWin = false;
     for (let row = 5; row >= 0; row--) { // loop rows bottom to up
       // if this row has no occupied tiles, skip it
       if (didWin) { break; }
 
-      if (!gameplay[row].includes('x')) { // && !gameplay[row].includes('o')
+      if (!gameplay[row].includes(marker)) {
         continue;
       }
 
       for (let col = 0; col <= 6; col++) { // loop through columns
-        if (gameplay[row][col] == "x"){
+        if (gameplay[row][col] == marker){
           if (checkNeighbors(row, col)) {
+            cueWin(marker);
             didWin = true;
             break;
           }
@@ -485,7 +543,6 @@ function videoGame() {
         checkUpRight(row, col, count) ||
         checkRight(row, col, count) ||
         checkDownRight(row, col, count)) {
-          cueWin();
           return true;
     }
     return false;
