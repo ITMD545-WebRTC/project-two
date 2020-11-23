@@ -68,6 +68,32 @@ const messageForm = document.querySelector("#message-form");
 const messageInput = document.querySelector("#message-input");
 const sendButton = document.querySelector("#send-button");
 
+var player = {
+  turn: 0,
+  canFire: false,
+  color: null,
+  opp: null,
+  marker: null
+};
+
+function setUserAsPlayer(playerTurn) {
+  if (playerTurn == 1) {
+    player.turn = 1;
+    player.canFire = true;
+    player.color = 'red';
+    player.opp = 'yellow';
+    player.marker = 'x';
+    return;
+  } if (playerTurn == 2) {
+    player.turn = 2;
+    player.canFire = false;
+    player.color = 'yellow';
+    player.opp = 'red';
+    player.marker = 'o';
+    return;
+  }
+}
+
 // immediately prompts user for a user name to enter chat
 const userName = prompt("Please enter user name:");
 
@@ -199,6 +225,7 @@ function startCall() {
   sc.emit("calling");
   startStream();
   negotiateConnection();
+  setUserAsPlayer(1);
 };
 
 // handling receiving connection
@@ -213,6 +240,7 @@ sc.on('calling', function() {
     callButton.hidden = true;
     startStream();
   });
+  setUserAsPlayer(2);
 });
 
 // Setting up the peer connection
