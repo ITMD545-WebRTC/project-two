@@ -135,8 +135,7 @@ video {
 
 #message-form {
   display: flex;
-  height: 2em;
-  margin-bottom: 1em;
+  margin: 0.5em 0 1em 0;
   width: 100%;
 }
 
@@ -144,7 +143,6 @@ video {
   border: none;
   border-radius: 15px 0 0 15px;
   display: block;
-  height: 100%;
   padding: 0.3em 1em;
   width: 100%;
 }
@@ -153,7 +151,8 @@ video {
   border: none;
   border-radius: 0 15px 15px 0;
   color: #FF3341;
-  height: 125%;
+  display: block;
+  height: 2em;
 }
 
 /* gameboard */
@@ -190,11 +189,13 @@ video {
   position: absolute;
 }
 
-.imaginer,
-.tiled {
+.imagine-red,
+.tiled-red {
   background-color: #FF1F2E;
 }
-.tiled-two {
+
+.imagine-yellow,
+.tiled-yellow {
   background-color: #FFFF00;
 }
 
