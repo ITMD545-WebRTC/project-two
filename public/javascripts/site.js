@@ -150,10 +150,10 @@ pc.ondatachannel = function(event) {
   if(event.channel.label == 'text chat'){
   dataChannel = event.channel;
   addDataChannelEventListeners(dataChannel);
-} else if (event.channel.label == 'gameChannel'){
-  dc = event.channel;
-  addDCEventListeners(dc, true);
-}
+  } else if (event.channel.label == 'gameChannel') {
+    dc = event.channel;
+    addDCEventListeners(dc);
+  }
 }
 
 // handle video streams
