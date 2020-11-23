@@ -405,12 +405,12 @@ function videoGame() {
       // EVENT LISTENERS for each column
       newCol.addEventListener('mouseover', function(event){ // hover in
         let bottomTile = landingTiles.get(event.currentTarget.id);
-        bottomTile.firstChild.classList.add('imaginer');
+        bottomTile.firstChild.classList.add('imagine-' + player.color);
       });
 
       newCol.addEventListener('mouseout', function(event){ // hover out
         let bottomTile = landingTiles.get(event.currentTarget.id);
-        bottomTile.firstChild.classList.remove('imaginer');
+        bottomTile.firstChild.classList.remove('imagine-' + player.color);
       });
 
       newCol.addEventListener('click', function(event){ // clickeroo
@@ -477,38 +477,26 @@ function videoGame() {
     });
   }
 
-
   // these happen when someone selects a column
-  function selectColumn(col) {
+  function selectColumn(col, color) {
+    var marker = color == 'red' ? 'x' : 'o'
     var selectedTile = landingTiles.get(col);
-    selectedTile.firstChild.classList.add('tiled');
-    updateGameplay(selectedTile);
-    checkWin();
-    // remove last tile on the vacantTiles
-    // assign last tile as the landingTile
+    selectedTile.firstChild.classList.add('tiled-' + color);
+    updateGameplay(selectedTile, marker);
+    checkWin(marker);
+    // remove last tile on the vacantTiles, assign last tile as the landingTile
     landingTiles.set(col, vacantTiles.get(col).pop());
-    //return selectedTile;
+    player.canFire = color == player.color ? false:true;
   }
+  videoGame.selectColumn = selectColumn;
 
-  // these happen when peer selects a column
-  function selectedColumn(col) {
-    var selectedTile = landingTiles.get(col);
-    selectedTile.firstChild.classList.add('tiled-two');
-    updateGameplay(selectedTile);
-    checkWin();
-    // remove last tile on the vacantTiles
-    // assign last tile as the landingTile
-    landingTiles.set(col, vacantTiles.get(col).pop());
-    //return selectedTile;
-  }
-  videoGame.selectedColumn = selectedColumn;
   // update gameplay[][] with player marker
-  function updateGameplay(selectedTile) {
+  function updateGameplay(selectedTile, marker) {
       const colMap = new Map([['A',0], ['B',1], ['C',2], ['D',3], ['E',4], ['F',5], ['G',6]]);
       let tileId = selectedTile.id;
       let row = parseInt(tileId.charAt(1));
       let col = colMap.get(tileId.charAt(0));
-      gameplay[row][col] = 'x';
+      gameplay[row][col] = marker; // player1: x, player2: o
   }
 
   function cueWin() {
@@ -522,19 +510,20 @@ function videoGame() {
     winnerLabel.classList.add('visible');
   }
 
-  function checkWin() {
+  function checkWin(marker) {
     var didWin = false;
     for (let row = 5; row >= 0; row--) { // loop rows bottom to up
       // if this row has no occupied tiles, skip it
       if (didWin) { break; }
 
-      if (!gameplay[row].includes('x')) { // && !gameplay[row].includes('o')
+      if (!gameplay[row].includes(marker)) {
         continue;
       }
 
       for (let col = 0; col <= 6; col++) { // loop through columns
-        if (gameplay[row][col] == "x"){
+        if (gameplay[row][col] == marker){
           if (checkNeighbors(row, col)) {
+            cueWin(marker);
             didWin = true;
             break;
           }
@@ -550,7 +539,6 @@ function videoGame() {
         checkUpRight(row, col, count) ||
         checkRight(row, col, count) ||
         checkDownRight(row, col, count)) {
-          cueWin();
           return true;
     }
     return false;
