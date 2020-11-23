@@ -381,7 +381,7 @@ function videoGame() {
     // iterates from A - G
     columns.forEach((col, i) => {
       // create a column(ul) of tiles(li)
-      let newCol = document.createElement('ol');
+      let newCol = document.createElement('ul');
       newCol.id = col;
 
       // iterates for each row
