@@ -194,6 +194,9 @@ video {
 .tiled {
   background-color: #FF1F2E;
 }
+.tiled-two {
+  background-color: #FFFF00;
+}
 
 #endgame {
   display: none;
