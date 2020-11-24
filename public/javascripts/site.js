@@ -67,12 +67,32 @@ const messageContainer = document.querySelector("#message-container");
 const messageForm = document.querySelector("#message-form");
 const messageInput = document.querySelector("#message-input");
 const sendButton = document.querySelector("#send-button");
-const tileInput = document.getElementsByClassName("circle imaginer tiled");
-const gameboard = document.querySelector('#gameboard');
-const chatPanel = document.querySelector('#chat-panel');
-const winnerLabel = document.querySelector('#endgame');
-const replayBtn = document.querySelector('#replay-btn');
-const chatPopout = document.querySelector('#chat-open');
+
+var player = {
+  turn: 0,
+  canFire: false,
+  color: null,
+  opp: null,
+  marker: null
+};
+
+function setUserAsPlayer(playerTurn) {
+  if (playerTurn == 1) {
+    player.turn = 1;
+    player.canFire = true;
+    player.color = 'red';
+    player.opp = 'yellow';
+    player.marker = 'x';
+    return;
+  } if (playerTurn == 2) {
+    player.turn = 2;
+    player.canFire = false;
+    player.color = 'yellow';
+    player.opp = 'red';
+    player.marker = 'o';
+    return;
+  }
+}
 
 // immediately prompts user for a user name to enter chat
 const userName = prompt("Please enter user name:");
@@ -99,9 +119,9 @@ function appendMessage(container, message, user) {
   }
 };
 
-function addDataChannelEventListeners(dataChannel) {
-  dataChannel.onmessage = function(event) {
-    appendMessage(messageContainer, `${event.userName}: ${event.data}`, 'peer');
+function addDataChannelEventListeners(datachannel) {
+  datachannel.onmessage = function(event) {
+    appendMessage(messageContainer, `${event.data}`, 'peer');
   }
   dataChannel.onopen = function() {
     // enabling message input and send button
@@ -117,18 +137,19 @@ function addDataChannelEventListeners(dataChannel) {
   messageForm.addEventListener('submit', function(event) {
     event.preventDefault();
     const message = messageInput.value;
-    appendMessage(messageContainer, `You: ${message}`, 'self');
-    dataChannel.send(message);
+    appendMessage(messageContainer, `${message}`, 'self');
+    datachannel.send(message);
     messageInput.value = "";
   });
 }
+
 //Recieved data from peer
 function addDCEventListeners(dc) {
   dc.onmessage = function(event) {
     console.log("See peer moves: ");
     console.log(`${event.data}`);
-    videoGame.selectedColumn(`${event.data}`);
-    player.canFire = true;
+    // updates gameplay accdg to opponent's move
+    videoGame.selectColumn(event.data, player.opp);
   }
 }
 
@@ -139,7 +160,7 @@ pc.onconnectionstatechange = function(event) {
       dataChannel = pc.createDataChannel('text chat');
       addDataChannelEventListeners(dataChannel);
       dc = pc.createDataChannel('gameChannel');
-      addDCEventListeners(dc, false);
+      addDCEventListeners(dc);
     }
   }
 }
@@ -150,10 +171,10 @@ pc.ondatachannel = function(event) {
   if(event.channel.label == 'text chat'){
   dataChannel = event.channel;
   addDataChannelEventListeners(dataChannel);
-} else if (event.channel.label == 'gameChannel'){
-  dc = event.channel;
-  addDCEventListeners(dc, true);
-}
+  } else if (event.channel.label == 'gameChannel') {
+    dc = event.channel;
+    addDCEventListeners(dc);
+  }
 }
 
 // handle video streams
@@ -205,6 +226,7 @@ function startCall() {
   sc.emit("calling");
   startStream();
   negotiateConnection();
+  setUserAsPlayer(1);
 };
 
 // handling receiving connection
@@ -219,6 +241,7 @@ sc.on('calling', function() {
     callButton.hidden = true;
     startStream();
   });
+  setUserAsPlayer(2);
 });
 
 // Setting up the peer connection
@@ -328,19 +351,16 @@ pc.onicecandidate = function({candidate}) {
   sc.emit('signal', { candidate: candidate});
 }
 
-function videoGame(firesFirst) {
+function videoGame() {
   // declare arrays and maps to keep track of gameplay
-  // const gameboard = document.querySelector('#gameboard');
-  // const chatPanel = document.querySelector('#chat-panel');
-  // const winnerLabel = document.querySelector('#endgame');
-  // const replayBtn = document.querySelector('#replay-btn');
-  // const chatPopout = document.querySelector('#chat-open');
+  const gameboard = document.querySelector('#gameboard');
+  const chatPanel = document.querySelector('#chat-panel');
+  const winnerLabel = document.querySelector('#endgame');
+  const replayBtn = document.querySelector('#replay-btn');
+  const chatPopout = document.querySelector('#chat-open');
   var landingTiles = new Map();
   var vacantTiles = new Map();
-  var gameplay;
-  var player = {
-    canFire: firesFirst
-  };
+  var gameplay; // 2d array of game progress
   setGameplay();
   setupBoard();
   isMobileView();
@@ -361,7 +381,7 @@ function videoGame(firesFirst) {
     // iterates from A - G
     columns.forEach((col, i) => {
       // create a column(ul) of tiles(li)
-      let newCol = document.createElement('ol');
+      let newCol = document.createElement('ul');
       newCol.id = col;
 
       // iterates for each row
@@ -385,21 +405,21 @@ function videoGame(firesFirst) {
       // EVENT LISTENERS for each column
       newCol.addEventListener('mouseover', function(event){ // hover in
         let bottomTile = landingTiles.get(event.currentTarget.id);
-        bottomTile.firstChild.classList.add('imaginer');
+        bottomTile.firstChild.classList.add('imagine-' + player.color);
       });
 
       newCol.addEventListener('mouseout', function(event){ // hover out
         let bottomTile = landingTiles.get(event.currentTarget.id);
-        bottomTile.firstChild.classList.remove('imaginer');
+        bottomTile.firstChild.classList.remove('imagine-' + player.color);
       });
 
       newCol.addEventListener('click', function(event){ // clickeroo
-        selectColumn(event.currentTarget.id);
-        dc.send(event.currentTarget.id);
-        if (!player.canFire){
+        // selectColumn(event.currentTarget.id);
+        if (player.canFire){
+          selectColumn(event.currentTarget.id, player.color);
+          dc.send(event.currentTarget.id);
           return;
         }
-        player.canFire = false;
       });
     }) // end of forEach (A-G)
   } // end of setup
@@ -457,64 +477,57 @@ function videoGame(firesFirst) {
     });
   }
 
-
   // these happen when someone selects a column
-  function selectColumn(col) {
+  function selectColumn(col, color) {
+    var marker = color == 'red' ? 'x' : 'o'
     var selectedTile = landingTiles.get(col);
-    selectedTile.firstChild.classList.add('tiled');
-    updateGameplay(selectedTile);
-    checkWin();
-    // remove last tile on the vacantTiles
-    // assign last tile as the landingTile
+    selectedTile.firstChild.classList.add('tiled-' + color);
+    updateGameplay(selectedTile, marker);
+    checkWin(marker);
+    // remove last tile on the vacantTiles, assign last tile as the landingTile
     landingTiles.set(col, vacantTiles.get(col).pop());
-    //return selectedTile;
+    player.canFire = color == player.color ? false:true;
   }
+  videoGame.selectColumn = selectColumn;
 
-  // these happen when peer selects a column
-  function selectedColumn(col) {
-    var selectedTile = landingTiles.get(col);
-    selectedTile.firstChild.classList.add('tiled-two');
-    updateGameplay(selectedTile);
-    checkWin();
-    // remove last tile on the vacantTiles
-    // assign last tile as the landingTile
-    landingTiles.set(col, vacantTiles.get(col).pop());
-    //return selectedTile;
-  }
-  videoGame.selectedColumn = selectedColumn;
   // update gameplay[][] with player marker
-  function updateGameplay(selectedTile) {
+  function updateGameplay(selectedTile, marker) {
       const colMap = new Map([['A',0], ['B',1], ['C',2], ['D',3], ['E',4], ['F',5], ['G',6]]);
       let tileId = selectedTile.id;
       let row = parseInt(tileId.charAt(1));
       let col = colMap.get(tileId.charAt(0));
-      gameplay[row][col] = 'x';
+      gameplay[row][col] = marker; // player1: x, player2: o
   }
 
-  function cueWin() {
+  function cueWin(marker) {
     console.log('ya win');
     var cols = document.querySelectorAll('#gameboard > ul');
+    var message = document.querySelector('#winner-label');
     cols.forEach((col, i) => {
       col.removeEventListener('click', function(event){ // remove clickeroo
-        selectColumn(event.currentTarget.id);
+        selectColumn(event.currentTarget.id, player.marker);
       });
-    });
+    }); // TODO: Gotta fix this
+    if (marker != player.marker) {
+      message.innerHTML = "Ya did pretty good. Wanna try again?";
+    }
     winnerLabel.classList.add('visible');
   }
 
-  function checkWin() {
+  function checkWin(marker) {
     var didWin = false;
     for (let row = 5; row >= 0; row--) { // loop rows bottom to up
       // if this row has no occupied tiles, skip it
       if (didWin) { break; }
 
-      if (!gameplay[row].includes('x')) { // && !gameplay[row].includes('o')
+      if (!gameplay[row].includes(marker)) {
         continue;
       }
 
       for (let col = 0; col <= 6; col++) { // loop through columns
-        if (gameplay[row][col] == "x"){
+        if (gameplay[row][col] == marker){
           if (checkNeighbors(row, col)) {
+            cueWin(marker);
             didWin = true;
             break;
           }
@@ -530,7 +543,6 @@ function videoGame(firesFirst) {
         checkUpRight(row, col, count) ||
         checkRight(row, col, count) ||
         checkDownRight(row, col, count)) {
-          cueWin();
           return true;
     }
     return false;
