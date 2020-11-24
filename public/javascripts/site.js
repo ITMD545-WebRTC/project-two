@@ -427,12 +427,12 @@ function videoGame() {
   window.onresize = isMobileView;
 
   function isMobileView() {
-    if (window.screen.width <= 800) {
+    if (window.innerWidth <= 800) {
       chatPanel.parentNode.removeChild(chatPanel);
       var overlay = document.querySelector('#overlay');
       overlay.append(chatPanel);
     }
-    if (window.screen.width > 800) {
+    if (window.innerWidth > 800) {
       chatPanel.parentNode.removeChild(chatPanel);
       var call = document.querySelector('#call');
       call.append(chatPanel);
