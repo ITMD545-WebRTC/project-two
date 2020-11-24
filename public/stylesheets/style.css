@@ -121,16 +121,31 @@ video {
 #message-container {
   height: 100%;
   max-height: 100%;
-  overflow-y: scroll;
+  overflow: scroll;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  flex-flow: column nowrap;
+  /* flex-direction: column; */
+  /* justify-content: flex-end; */
   margin: 0 0 1em 0;
+}
+
+.peer {
+  margin-right: auto;
+  background-color: #68646C;
+}
+
+.self {
+  margin-left: auto;
+  background-color: #3751a2;
 }
 
 #message-container li {
   color: white;
   line-height: 1.3em;
+  border: 1px solid pink;
+  border-radius: 10px;
+  padding: 8px;
+  margin-top: 4px;
 }
 
 #message-form {
@@ -301,7 +316,7 @@ body.disable-scroll {
   }
 
   #message-container {
-    flex-direction: column-reverse;
+    /* flex-direction: column-reverse; */
   }
 }
 
