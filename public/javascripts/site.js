@@ -46,10 +46,7 @@ var rtcConfig = {
     {
       urls: [
         'stun:stun.l.google.com:19302',
-        'stun:stun1.l.google.com:19302',
-        'stun:stun2.l.google.com:19302',
-        'stun:stun3.l.google.com:19302',
-        'stun:stun4.l.google.com:19302'
+        'stun:stun1.l.google.com:19302'
       ]
     }
   ]
@@ -95,10 +92,28 @@ function setUserAsPlayer(playerTurn) {
 }
 
 // immediately prompts user for a user name to enter chat
-const userName = prompt("Please enter user name:");
+var userName = prompt("Please enter user name:");
+var password = prompt("Please enter your password:");
 
-// appends message 'You have joined the room' to message container
+
+var dict = {
+  user: "password",
+  student: "webrtc"
+}
+//console.log(dict);
+//while (userName.toLowerCase() !== "aamir" && password !== "password"){
+while (dict[userName] !== password) {
+  alert('Invalid Login Please Try Again');
+  var userName = prompt("Please enter user name:");
+  var password = prompt("Please enter your password:");
+}
+
 appendMessage(messageContainer, `${userName} has joined the room.`, 'self');
+
+//var fs = require('fs');
+//var logindb = fs.readFileSync('././logindb.csv');
+//console.log(logindb);
+
 
 // append message function
 // appends message to new message element
