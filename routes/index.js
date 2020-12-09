@@ -5,7 +5,7 @@ const router = express.Router();
 const util = require('../lib/utilities.js');
 
 /* GET random room. */
-router.get('/', function(req, res, next) {
+router.get('/room', function(req, res, next) {
   res.redirect(`/${util.randomRoom(3,4,3)}`)
 });
 
