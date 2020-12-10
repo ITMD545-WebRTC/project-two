@@ -102,7 +102,7 @@ function addDCEventListeners(dc) {
     console.log("See peer moves: ");
     console.log(`${event.data}`);
     // updates gameplay accdg to opponent's move
-    videoGame.selectColumn(event.data, player.opp);
+    videoGame.selectColumn(event.data, false);
   }
 }
 
@@ -179,7 +179,7 @@ function startCall() {
   sc.emit("calling");
   startStream();
   negotiateConnection();
-  setUserAsPlayer(1);
+  videoGame.setUserAsPlayer(1);
 };
 
 // handling receiving connection
@@ -194,7 +194,7 @@ sc.on('calling', function() {
     callButton.hidden = true;
     startStream();
   });
-  setUserAsPlayer(2);
+  videoGame.setUserAsPlayer(2);
 });
 
 // Setting up the peer connection
@@ -378,7 +378,7 @@ function videoGame() {
       newCol.addEventListener('click', function(event){ // clickeroo
         // selectColumn(event.currentTarget.id);
         if (player.canFire){
-          selectColumn(event.currentTarget.id, player.color);
+          videoGame.selectColumn(event.currentTarget.id, true);
           dc.send(event.currentTarget.id);
           return;
         }
@@ -458,8 +458,9 @@ function videoGame() {
   }
 
   // these happen when someone selects a column
-  function selectColumn(col, color) {
-    var marker = color == 'red' ? 'x' : 'o'
+  videoGame.selectColumn = function selectColumn(col, isSelf) {
+    var marker = isSelf ? player.marker : player.opp;
+    var color = marker == 'x' ? 'red' : 'yellow';
     var selectedTile = landingTiles.get(col);
     selectedTile.firstChild.classList.add('tiled-' + color);
     updateGameplay(selectedTile, marker);
@@ -468,7 +469,6 @@ function videoGame() {
     landingTiles.set(col, vacantTiles.get(col).pop());
     player.canFire = color == player.color ? false:true;
   }
-  videoGame.selectColumn = selectColumn;
 
   // update gameplay[][] with player marker
   function updateGameplay(selectedTile, marker) {
@@ -485,7 +485,7 @@ function videoGame() {
     var message = document.querySelector('#winner-label');
     cols.forEach((col, i) => {
       col.removeEventListener('click', function(event){ // remove clickeroo
-        selectColumn(event.currentTarget.id, player.marker);
+        selectColumn(event.currentTarget.id, true);
       });
     }); // TODO: Gotta fix this
     if (marker != player.marker) {
