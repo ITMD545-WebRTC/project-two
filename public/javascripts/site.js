@@ -47,32 +47,6 @@ const messageForm = document.querySelector("#message-form");
 const messageInput = document.querySelector("#message-input");
 const sendButton = document.querySelector("#send-button");
 
-var player = {
-  turn: 0,
-  canFire: false,
-  color: null,
-  opp: null,
-  marker: null
-};
-
-function setUserAsPlayer(playerTurn) {
-  if (playerTurn == 1) {
-    player.turn = 1;
-    player.canFire = true;
-    player.color = 'red';
-    player.opp = 'yellow';
-    player.marker = 'x';
-    return;
-  } if (playerTurn == 2) {
-    player.turn = 2;
-    player.canFire = false;
-    player.color = 'yellow';
-    player.opp = 'red';
-    player.marker = 'o';
-    return;
-  }
-}
-
 // immediately prompts user for a user name to enter chat
 const userName = prompt("Please enter user name:");
 
@@ -340,6 +314,15 @@ function videoGame() {
   var landingTiles = new Map();
   var vacantTiles = new Map();
   var gameplay; // 2d array of game progress
+
+  var player = {
+    turn: 0,
+    canFire: false,
+    color: null,
+    opp: null,
+    marker: null
+  };
+
   setGameplay();
   setupBoard();
   isMobileView();
@@ -402,6 +385,24 @@ function videoGame() {
       });
     }) // end of forEach (A-G)
   } // end of setup
+
+  videoGame.setUserAsPlayer = function setUserAsPlayer(playerTurn) {
+    if (playerTurn == 1) {
+      player.turn = 1;
+      player.canFire = true;
+      player.color = 'red';
+      player.opp = 'o';
+      player.marker = 'x';
+      return;
+    } if (playerTurn == 2) {
+      player.turn = 2;
+      player.canFire = false;
+      player.color = 'yellow';
+      player.opp = 'x';
+      player.marker = 'o';
+      return;
+    }
+  };
 
   window.onresize = isMobileView;
 
