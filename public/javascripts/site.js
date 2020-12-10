@@ -99,7 +99,7 @@ function addDCEventListeners(dc) {
     console.log("See peer moves: ");
     console.log(`${event.data}`);
     // updates gameplay accdg to opponent's move
-    videoGame.selectColumn(event.data, false);
+    ConnectFour.selectColumn(event.data, false);
   }
 }
 
@@ -176,7 +176,7 @@ function startCall() {
   sc.emit("calling");
   startStream();
   negotiateConnection();
-  videoGame.setUserAsPlayer(1);
+  ConnectFour.setUserAsPlayer(1);
 };
 
 // handling receiving connection
@@ -191,7 +191,7 @@ sc.on('calling', function() {
     callButton.hidden = true;
     startStream();
   });
-  videoGame.setUserAsPlayer(2);
+  ConnectFour.setUserAsPlayer(2);
 });
 
 // Setting up the peer connection
@@ -301,7 +301,7 @@ pc.onicecandidate = function({candidate}) {
   sc.emit('signal', { candidate: candidate});
 }
 
-function videoGame() {
+function ConnectFour() {
   // declare arrays and maps to keep track of gameplay
   const gameboard = document.querySelector('#gameboard');
   const chatPanel = document.querySelector('#chat-panel');
@@ -375,7 +375,7 @@ function videoGame() {
       newCol.addEventListener('click', function(event){ // clickeroo
         // selectColumn(event.currentTarget.id);
         if (player.canFire){
-          videoGame.selectColumn(event.currentTarget.id, true);
+          ConnectFour.selectColumn(event.currentTarget.id, true);
           dc.send(event.currentTarget.id);
           return;
         }
@@ -383,7 +383,7 @@ function videoGame() {
     }) // end of forEach (A-G)
   } // end of setup
 
-  videoGame.setUserAsPlayer = function setUserAsPlayer(playerTurn) {
+  ConnectFour.setUserAsPlayer = function setUserAsPlayer(playerTurn) {
     if (playerTurn == 1) {
       player.turn = 1;
       player.canFire = true;
@@ -469,7 +469,7 @@ function videoGame() {
   }
 
   // these happen when someone selects a column
-  videoGame.selectColumn = function selectColumn(col, isSelf) {
+  ConnectFour.selectColumn = function selectColumn(col, isSelf) {
     var marker = isSelf ? player.marker : player.opp;
     var color = marker == 'x' ? 'red' : 'yellow';
     var selectedTile = landingTiles.get(col);
@@ -620,4 +620,4 @@ function videoGame() {
 
 }; // end of IIFE
 
-videoGame();
+ConnectFour();
