@@ -18,12 +18,14 @@ body {
 
 /* login page */
 main.loginColumn {
-  background-color: red;
-  border: 1px solid black;
   margin:auto;
-  width: 60%;
+  width: 80%;
   display: grid;
   grid-template-columns: 2fr;
+}
+
+input {
+  margin: 10px;
 }
 
 button {
@@ -38,6 +40,10 @@ h1 {
   font-family: 'Viga', sans-serif;
   font-size: 3.5em;
   text-align: center;
+}
+
+h1#loginHeader {
+  margin: 20px;
 }
 
 header {
@@ -336,7 +342,10 @@ body.disable-scroll {
   #login-page {
     justify-content: center;
     display: flex;
-    align-items: center;
+  }
+
+  input {
+    margin: 10px;
   }
 }
 
