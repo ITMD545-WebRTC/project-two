@@ -401,20 +401,34 @@ function videoGame() {
     }
   };
 
-  window.onresize = isMobileView;
+  function hasResponsiveFeature(feature) {
+    var size = window.getComputedStyle(document.body, ':after').getPropertyValue('content');
+    if(size.includes(feature)) {
+      return true;
+    }
+    return false;
+  }
 
   function isMobileView() {
-    if (window.innerWidth <= 800) {
+    console.log("checking");
+    if (hasResponsiveFeature('mobile')) {
       chatPanel.parentNode.removeChild(chatPanel);
       var overlay = document.querySelector('#overlay');
       overlay.append(chatPanel);
     }
-    if (window.innerWidth > 800) {
+    else {
       chatPanel.parentNode.removeChild(chatPanel);
       var call = document.querySelector('#call');
       call.append(chatPanel);
     }
   }
+
+  var timeout = false;
+  window.addEventListener('resize', function() {
+    clearTimeout(timeout);
+    // start timing for event "completion"
+    timeout = setTimeout(isMobileView, 200);
+  });  // source: http://bencentra.com/code/2015/02/27/optimizing-window-resize.html
 
   // REPLAY button is clicked, reset everything
   replayBtn.addEventListener('click', function(event) {
