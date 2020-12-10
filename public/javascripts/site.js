@@ -1,23 +1,5 @@
 'use strict'
 
-// TODO: notify new user has connected/disconnected to already connected users in chat
-// TODO: format user messages to be able to distinguish user messages
-
-// formatting message sent from user - 'User: Message'
-// socket.on('chat-message', function(data) {
-//   appendMessage(`${data.name}: ${data.message}`);
-// });
-
-// append message to container if user connected
-// socket.on('user-connected', function(userName) {
-//   appendMessage(`${userName} connected`);
-// });
-
-// append message to container if user disconnected
-// socket.on('user-disconnected', function(userName) {
-//   appendMessage(`${userName} disconnected`);
-// });
-
 // namespace --> signaling channel (sc)
 var sc = io.connect('/' + NAMESPACE);
 
@@ -36,9 +18,6 @@ var clientIs = {
   polite: false,
   settingRemoteAnswerPending: false
 };
-
-// eventual setup of STUN servers
-// var rtcConfig = null;
 
 // setting up google STUN servers
 var rtcConfig = {
