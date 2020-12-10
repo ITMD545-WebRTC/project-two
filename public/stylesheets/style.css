@@ -16,6 +16,16 @@ body {
   padding: 5vh 5vw;
 }
 
+/* login page */
+main.loginColumn {
+  background-color: red;
+  border: 1px solid black;
+  margin:auto;
+  width: 60%;
+  display: grid;
+  grid-template-columns: 2fr;
+}
+
 button {
   border: none;
   cursor: pointer;
@@ -317,6 +327,16 @@ body.disable-scroll {
 
   #message-container {
     /* flex-direction: column-reverse; */
+  }
+
+  h1#loginHeader {
+    margin: 20px;
+  }
+
+  #login-page {
+    justify-content: center;
+    display: flex;
+    align-items: center;
   }
 }
 
