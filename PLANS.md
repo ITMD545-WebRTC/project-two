@@ -8,4 +8,6 @@ Another cool feature we would have in a muti-peer connection setting, is that an
 
 Currently the users are only able to share their audio and video stream from their camera and microphone but, onwards we would also like them to be able to share any information using the share screen feature. The share screen feature can be really useful as users can share any tabs, windows and documents on their desktop. The sharing feature will be controlled by the host and the host will decide as to who can share as part of their host controls.
 
-Additionally we also want to implement a pre join screen where users will be able to check and test their video and audio streams. This will allow them to prepare and check if their camera output is correct and also test if the audio and microphone are connected properly to which they prefer. Lastly but most importantly, we also want the users to be able to turn off their video and audio at any given time. In other words, have a mute feature for the audio and video
+Additionally we also want to implement a pre join screen where users will be able to check and test their video and audio streams. This will allow them to prepare and check if their camera output is correct and also test if the audio and microphone are connected properly to which they prefer. Lastly but most importantly, we also want the users to be able to turn off their video and audio at any given time. In other words, have a mute feature for the audio and video.
+
+![Stun Turn Server!](public/images/coturn.png)
