@@ -16,6 +16,18 @@ body {
   padding: 5vh 5vw;
 }
 
+/* login page */
+main.loginColumn {
+  margin:auto;
+  width: 80%;
+  display: grid;
+  grid-template-columns: 2fr;
+}
+
+input {
+  margin: 10px;
+}
+
 button {
   border: none;
   cursor: pointer;
@@ -28,6 +40,10 @@ h1 {
   font-family: 'Viga', sans-serif;
   font-size: 3.5em;
   text-align: center;
+}
+
+h1#loginHeader {
+  margin: 20px;
 }
 
 header {
@@ -324,6 +340,20 @@ body::after {
     /* flex-direction: column-reverse; */
   }
 
+
+  h1#loginHeader {
+    margin: 20px;
+  }
+
+  #login-page {
+    justify-content: center;
+    display: flex;
+  }
+
+  input {
+    margin: 10px;
+  }
+  
   body::after {
     content: "";
   }
