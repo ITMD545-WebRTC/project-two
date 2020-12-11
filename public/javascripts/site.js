@@ -24,11 +24,8 @@ var rtcConfig = {
   iceServers: [
     {
       urls: [
-        'stun:stun.l.google.com:19302',
         'stun:stun1.l.google.com:19302',
-        'stun:stun2.l.google.com:19302',
-        'stun:stun3.l.google.com:19302',
-        'stun:stun4.l.google.com:19302'
+        'stun:stun2.l.google.com:19302'
       ]
     }
   ]
@@ -46,32 +43,6 @@ const messageContainer = document.querySelector("#message-container");
 const messageForm = document.querySelector("#message-form");
 const messageInput = document.querySelector("#message-input");
 const sendButton = document.querySelector("#send-button");
-
-var player = {
-  turn: 0,
-  canFire: false,
-  color: null,
-  opp: null,
-  marker: null
-};
-
-function setUserAsPlayer(playerTurn) {
-  if (playerTurn == 1) {
-    player.turn = 1;
-    player.canFire = true;
-    player.color = 'red';
-    player.opp = 'yellow';
-    player.marker = 'x';
-    return;
-  } if (playerTurn == 2) {
-    player.turn = 2;
-    player.canFire = false;
-    player.color = 'yellow';
-    player.opp = 'red';
-    player.marker = 'o';
-    return;
-  }
-}
 
 // immediately prompts user for a user name to enter chat
 const userName = prompt("Please enter user name:");
@@ -128,7 +99,7 @@ function addDCEventListeners(dc) {
     console.log("See peer moves: ");
     console.log(`${event.data}`);
     // updates gameplay accdg to opponent's move
-    videoGame.selectColumn(event.data, player.opp);
+    ConnectFour.selectColumn(event.data, false);
   }
 }
 
@@ -205,7 +176,7 @@ function startCall() {
   sc.emit("calling");
   startStream();
   negotiateConnection();
-  setUserAsPlayer(1);
+  ConnectFour.setUserAsPlayer(1);
 };
 
 // handling receiving connection
@@ -220,7 +191,7 @@ sc.on('calling', function() {
     callButton.hidden = true;
     startStream();
   });
-  setUserAsPlayer(2);
+  ConnectFour.setUserAsPlayer(2);
 });
 
 // Setting up the peer connection
@@ -330,7 +301,7 @@ pc.onicecandidate = function({candidate}) {
   sc.emit('signal', { candidate: candidate});
 }
 
-function videoGame() {
+function ConnectFour() {
   // declare arrays and maps to keep track of gameplay
   const gameboard = document.querySelector('#gameboard');
   const chatPanel = document.querySelector('#chat-panel');
@@ -340,6 +311,15 @@ function videoGame() {
   var landingTiles = new Map();
   var vacantTiles = new Map();
   var gameplay; // 2d array of game progress
+
+  var player = {
+    turn: 0,
+    canFire: false,
+    color: null,
+    opp: null,
+    marker: null
+  };
+
   setGameplay();
   setupBoard();
   isMobileView();
@@ -395,7 +375,7 @@ function videoGame() {
       newCol.addEventListener('click', function(event){ // clickeroo
         // selectColumn(event.currentTarget.id);
         if (player.canFire){
-          selectColumn(event.currentTarget.id, player.color);
+          ConnectFour.selectColumn(event.currentTarget.id, true);
           dc.send(event.currentTarget.id);
           return;
         }
@@ -403,20 +383,52 @@ function videoGame() {
     }) // end of forEach (A-G)
   } // end of setup
 
-  window.onresize = isMobileView;
+  ConnectFour.setUserAsPlayer = function setUserAsPlayer(playerTurn) {
+    if (playerTurn == 1) {
+      player.turn = 1;
+      player.canFire = true;
+      player.color = 'red';
+      player.opp = 'o';
+      player.marker = 'x';
+      return;
+    } if (playerTurn == 2) {
+      player.turn = 2;
+      player.canFire = false;
+      player.color = 'yellow';
+      player.opp = 'x';
+      player.marker = 'o';
+      return;
+    }
+  };
+
+  function hasResponsiveFeature(feature) {
+    var size = window.getComputedStyle(document.body, ':after').getPropertyValue('content');
+    if(size.includes(feature)) {
+      return true;
+    }
+    return false;
+  }
 
   function isMobileView() {
-    if (window.innerWidth <= 800) {
+    console.log("checking");
+    if (hasResponsiveFeature('mobile')) {
       chatPanel.parentNode.removeChild(chatPanel);
       var overlay = document.querySelector('#overlay');
       overlay.append(chatPanel);
     }
-    if (window.innerWidth > 800) {
+    else {
       chatPanel.parentNode.removeChild(chatPanel);
       var call = document.querySelector('#call');
       call.append(chatPanel);
     }
   }
+
+  var timeout = false;
+  window.addEventListener('resize', function() {
+    clearTimeout(timeout);
+    // start timing for event "completion"
+    timeout = setTimeout(isMobileView, 200);
+  });  // source: http://bencentra.com/code/2015/02/27/optimizing-window-resize.html
 
   // REPLAY button is clicked, reset everything
   replayBtn.addEventListener('click', function(event) {
@@ -457,8 +469,9 @@ function videoGame() {
   }
 
   // these happen when someone selects a column
-  function selectColumn(col, color) {
-    var marker = color == 'red' ? 'x' : 'o'
+  ConnectFour.selectColumn = function selectColumn(col, isSelf) {
+    var marker = isSelf ? player.marker : player.opp;
+    var color = marker == 'x' ? 'red' : 'yellow';
     var selectedTile = landingTiles.get(col);
     selectedTile.firstChild.classList.add('tiled-' + color);
     updateGameplay(selectedTile, marker);
@@ -467,7 +480,6 @@ function videoGame() {
     landingTiles.set(col, vacantTiles.get(col).pop());
     player.canFire = color == player.color ? false:true;
   }
-  videoGame.selectColumn = selectColumn;
 
   // update gameplay[][] with player marker
   function updateGameplay(selectedTile, marker) {
@@ -484,7 +496,7 @@ function videoGame() {
     var message = document.querySelector('#winner-label');
     cols.forEach((col, i) => {
       col.removeEventListener('click', function(event){ // remove clickeroo
-        selectColumn(event.currentTarget.id, player.marker);
+        selectColumn(event.currentTarget.id, true);
       });
     }); // TODO: Gotta fix this
     if (marker != player.marker) {
@@ -608,4 +620,4 @@ function videoGame() {
 
 }; // end of IIFE
 
-videoGame();
+ConnectFour();
